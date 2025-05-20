@@ -55,6 +55,16 @@ type ManageRouteGraphResponse = {
   success: boolean;
   message: string;
 }
+
+type ListRouteGraphsRequest = {
+  map_id: number;
+}
+
+type ListRouteGraphsResponse = {
+  success: boolean;
+  route_graphs_list: string[];
+  message: string;
+}
 // ----------------------------
 
 // Panel method
@@ -216,6 +226,11 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   // Fetching/Visualizing route graph
   const [fetchRouteGraphHoveringButton, setFetchRouteGraphHoveringButton] = useState(false);
   const [loadingFetchRouteGraphButton, setLoadingFetchRouteGraphButton] = useState(false);
+
+  // Listing route graphs
+  const [listRouteGraphsHoveringButton, setListRouteGraphsHoveringButton] = useState(false);
+  const [loadingListRouteGraphsButton, setLoadingListRouteGraphsButton] = useState(false);
+  const [list_route_graphs_response, setListRouteGraphsResponse] = useState<ListRouteGraphsResponse | null>(null);
   // ------------------------------------
 
   // Service calls ------------------
@@ -674,6 +689,40 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       setLoadingFetchRouteGraphButton(false);
     }
   };
+
+  const callListRouteGraphs = async () => {
+    setLoadingListRouteGraphsButton(true);
+    setError(undefined);
+
+    // Parse & guard for input
+    const parsed_map_id_val = parseInt(mapIDInputValue, 10);
+    if (isNaN(parsed_map_id_val) || parsed_map_id_val < UUID_MIN || parsed_map_id_val > UUID_MAX) {
+      setError("Please enter a valid map ID value");
+      setLoadingListRouteGraphsButton(false);
+      return;
+    }
+
+    // Fill in request message
+    const request: ListRouteGraphsRequest = {
+      map_id: parsed_map_id_val
+    }
+
+    // Call service
+    try {
+      const raw = await context.callService?.("/list_route_graphs", request);
+      const res = raw as ListRouteGraphsResponse;
+      if(res){
+        setListRouteGraphsResponse(res);
+        setError(undefined);
+      }
+      setError(undefined);
+      context.saveState({ map_id: parsed_map_id_val });
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoadingListRouteGraphsButton(false);
+    }
+  };
   
   // ------------------------------------
 
@@ -683,6 +732,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     gridTemplateColumns: "1fr 1fr 1fr 1fr",
     gap: 12,
     padding: 24,
+    gridAutoRows: "minmax(0, auto)",
 
     height: "100%",
     overflowY: "auto",
@@ -936,6 +986,27 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     marginTop: "10px",
   };
   const fetchButtonHoverStyle: React.CSSProperties = fetchRouteGraphHoveringButton
+    ? { backgroundColor: "#006bb3" } : {};
+  
+  const listButtonStyle: React.CSSProperties = {
+    alignSelf: "center",
+    flexShrink: 1,
+    overflow: "hidden", 
+    textOverflow: "ellipsis",
+    maxWidth: "80%",
+    whiteSpace: "nowrap",
+    padding: "10px 30px",
+    border: "none",
+    borderRadius: 2,
+    backgroundColor: "#0079ca",
+    fontSize: "0.73rem",
+    fontWeight: "bold",
+    color: "#fff",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+    marginTop: "10px",
+  };
+  const listButtonHoverStyle: React.CSSProperties = listRouteGraphsHoveringButton
     ? { backgroundColor: "#006bb3" } : {};
 
   const responseStyle: React.CSSProperties = {
@@ -1578,6 +1649,54 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
               {manage_route_graph_response?.message.toString() ?? ""}
             </div>
 
+          </pre>
+        )}
+      </div>
+
+      <div style={{
+        ...commonDataCellStyle, 
+        gridColumn: "4 / span 1",
+        minHeight: 0,
+        }}>
+        <label style={{...labelTextStyle, fontWeight: "bold",}}>List Routes</label>
+        <button
+          style={{ 
+            ...listButtonStyle, 
+            ...listButtonHoverStyle,
+          }}
+          onClick={callListRouteGraphs}
+          disabled={loadingListRouteGraphsButton}
+          onMouseEnter={() => setListRouteGraphsHoveringButton(true)}
+          onMouseLeave={() => setListRouteGraphsHoveringButton(false)}
+        >
+          {loadingListRouteGraphsButton ? "Requesting…" : "List"}
+        </button>
+
+        {(
+          <pre style={{ 
+              ...responseStyle, 
+              overflowY: "auto",
+              maxHeight: "50%",
+              }}>
+            <div style={{
+              textOverflow: "ellipsis",
+              }}><strong>success:</strong> {" "}
+              {list_route_graphs_response?.success.toString() ?? ""}
+            </div>
+            <div style={{
+              textOverflow: "ellipsis",
+              whiteSpace: "wrap",
+              }}><strong>message:</strong> {" "}
+              {list_route_graphs_response?.message.toString() ?? ""}
+            </div>
+            <div style={{
+              }}><strong>route_graphs:</strong>
+              <ul>
+                {list_route_graphs_response?.route_graphs_list.map((routeGraph, index) => (
+                  <li key={index}>{routeGraph}</li>
+                ))}
+              </ul>
+            </div>
           </pre>
         )}
       </div>
