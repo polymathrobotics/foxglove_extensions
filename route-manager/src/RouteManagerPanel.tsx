@@ -283,7 +283,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/modify_route_node", request);
+      const raw = await context.callService?.("/route_manager/modify_route_node", request);
       const res = raw as ModifyRouteNodeResponse;
       if(res){
         setModifyRouteNodeResponse(res);
@@ -342,7 +342,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/modify_route_node", request);
+      const raw = await context.callService?.("/route_manager/modify_route_node", request);
       const res = raw as ModifyRouteNodeResponse;
       if(res){
         setModifyRouteNodeResponse(res);
@@ -414,7 +414,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/modify_route_node", request);
+      const raw = await context.callService?.("/route_manager/modify_route_node", request);
       const res = raw as ModifyRouteNodeResponse;
       if(res){
         setModifyRouteNodeResponse(res);
@@ -485,7 +485,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/modify_route_edge", request);
+      const raw = await context.callService?.("/route_manager/modify_route_edge", request);
       const res = raw as ModifyRouteEdgeResponse;
       if(res){
         setModifyRouteEdgeResponse(res);
@@ -543,7 +543,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/modify_route_edge", request);
+      const raw = await context.callService?.("/route_manager/modify_route_edge", request);
       const res = raw as ModifyRouteEdgeResponse;
       if(res){
         setModifyRouteEdgeResponse(res);
@@ -587,7 +587,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/manage_route_graph", request);
+      const raw = await context.callService?.("/route_manager/manage_route_graph", request);
       const res = raw as ManageRouteGraphResponse;
       if(res){
         setManageRouteGraphResponse(res);
@@ -630,7 +630,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/manage_route_graph", request);
+      const raw = await context.callService?.("/route_manager/manage_route_graph", request);
       const res = raw as ManageRouteGraphResponse;
       if(res){
         setManageRouteGraphResponse(res);
@@ -673,7 +673,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/manage_route_graph", request);
+      const raw = await context.callService?.("/route_manager/manage_route_graph", request);
       const res = raw as ManageRouteGraphResponse;
       if(res){
         res.message = "";
@@ -709,7 +709,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
     // Call service
     try {
-      const raw = await context.callService?.("/list_route_graphs", request);
+      const raw = await context.callService?.("/route_manager/list_route_graphs", request);
       const res = raw as ListRouteGraphsResponse;
       if(res){
         setListRouteGraphsResponse(res);
