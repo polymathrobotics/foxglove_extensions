@@ -142,6 +142,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
   // Service call by pose
   const callRouteNavigationByPose = async () => {
     setLoadingPoseButton(true);
+    setResponse(null);
 
     // Parse & guard for input
     const parsed_goal_pose_x_val = parseInt(poseXInputValue, 10);
@@ -206,6 +207,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
   // Service call by ID
   const callRouteNavigationByID = async () => {
     setLoadingIDButton(true);
+    setResponse(null);
 
     // Parse & guard for input
     const parsed_goal_node_id_val = parseInt(nodeIDInputValue, 10);
@@ -251,6 +253,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
   // Service call by name
   const callRouteNavigationByName = async () => {
     setLoadingNameButton(true);
+    setResponse(null);
 
     // Parse & guard for input
     const parsed_goal_node_name_val = nodeNameInputValue.trim();
@@ -347,6 +350,20 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     cursor: "pointer",
     transition: "background-color 0.2s ease",
   };
+
+  const responseStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    flexShrink: 1,
+    borderRadius: 4,
+    overflow: "hidden", 
+    textOverflow: "ellipsis",
+    maxWidth: "90%",
+    padding: "20px",
+    backgroundColor: "#1f1f26",
+    placeSelf: "center",
+    minWidth: "90%",
+  }
   
   // Styles for requesting by pose
   const poseXYLabelTextStyle: React.CSSProperties = {
@@ -378,6 +395,8 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
   } : {};
   const buttonPoseHoverStyle: React.CSSProperties = hoveringButtonPose
     ? { backgroundColor: "#006bb3" } : {};
+  const buttonPoseLoadingStyle: React.CSSProperties = loadingPoseButton
+    ? { backgroundColor: "gray" } : {};
 
   // Styles for requesting by ID
   const inputIDStyle: React.CSSProperties = {
@@ -397,11 +416,14 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     overflow: "hidden", 
     textOverflow: "ellipsis",
   };
-  const inputIDHoverStyle: React.CSSProperties = hoveringInputID ? {
+  const inputIDHoverStyle: React.CSSProperties = hoveringInputID 
+    ? {
     borderColor: "#fff",
   } : {};
   const buttonIDHoverStyle: React.CSSProperties = hoveringButtonID
     ? { backgroundColor: "#006bb3" } : {};
+  const buttonIDLoadingStyle: React.CSSProperties = loadingIDButton
+    ? { backgroundColor: "gray" } : {};
 
   // Styles for requesting by name
   const inputNameStyle: React.CSSProperties = {
@@ -426,6 +448,8 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
   } : {};
   const buttonNameHoverStyle: React.CSSProperties = hoveringButtonName
     ? { backgroundColor: "#006bb3" } : {};
+  const buttonNameLoadingStyle: React.CSSProperties = loadingNameButton
+    ? { backgroundColor: "gray" } : {};
   // -------------------------------
 
   // Return panel
@@ -467,7 +491,11 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
           />
       </div>
       <button
-        style={{ ...buttonStyle, ...buttonPoseHoverStyle}}
+        style={{ 
+          ...buttonStyle, 
+          ...buttonPoseHoverStyle,
+          ...buttonPoseLoadingStyle,
+        }}
         onClick={callRouteNavigationByPose}
         disabled={loadingPoseButton}
         onMouseEnter={() => setHoveringButtonPose(true)}
@@ -493,7 +521,11 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <button
-        style={{ ...buttonStyle, ...buttonIDHoverStyle}}
+        style={{ 
+          ...buttonStyle, 
+          ...buttonIDHoverStyle,
+          ...buttonIDLoadingStyle,
+        }}
         onClick={callRouteNavigationByID}
         disabled={loadingIDButton}
         onMouseEnter={() => setHoveringButtonID(true)}
@@ -519,22 +551,40 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <button
-        style={{ ...buttonStyle, ...buttonNameHoverStyle}}
+        style={{ 
+          ...buttonStyle, 
+          ...buttonNameHoverStyle,
+          ...buttonNameLoadingStyle,
+        }}
         onClick={callRouteNavigationByName}
         disabled={loadingNameButton}
         onMouseEnter={() => setHoveringButtonName(true)}
         onMouseLeave={() => setHoveringButtonName(false)}
       >
-        {loadingIDButton ? "Requesting…" : "Request by Name"}
+        {loadingNameButton ? "Requesting…" : "Request by Name"}
       </button>
 
       {error && (
         <div style={{ color: "crimson", marginTop: 8 }}>{error}</div>
       )}
 
-      {response && (
-        <pre style={{ marginTop: 12 }}>
-          {JSON.stringify(response, null, 2)}
+      <label style={{...labelTextStyle, fontWeight: "bold",}}>Response</label>
+      {(
+        <pre style={{ ...responseStyle }}>
+          <div style={{
+            overflow: "hidden", 
+            textOverflow: "ellipsis",
+            }}><strong>success:</strong> {" "}
+            {response?.success.toString() ?? ""}
+          </div>
+          <div style={{
+            overflow: "hidden", 
+            textOverflow: "ellipsis",
+            whiteSpace: "wrap",
+            }}><strong>message:</strong> {" "}
+            {response?.message.toString() ?? ""}
+          </div>
+
         </pre>
       )}
     </div>
