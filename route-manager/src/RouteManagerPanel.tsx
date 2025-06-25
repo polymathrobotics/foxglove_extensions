@@ -236,6 +236,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   // Service calls ------------------
   const callAddRouteNode = async () => {
     setLoadingAddRouteNodeButton(true);
+    setModifyRouteNodeResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -304,6 +305,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callDeleteRouteNode = async () => {
     setLoadingDeleteRouteNodeButton(true);
+    setModifyRouteNodeResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -361,6 +363,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callEditRouteNode = async () => {
     setLoadingEditRouteNodeButton(true);
+    setModifyRouteNodeResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -436,6 +439,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callAddRouteEdge = async () => {
     setLoadingAddRouteEdgeButton(true);
+    setModifyRouteEdgeResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -506,6 +510,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callDeleteRouteEdge = async () => {
     setLoadingDeleteRouteEdgeButton(true);
+    setModifyRouteEdgeResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -562,6 +567,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callLoadRouteGraph = async () => {
     setLoadingLoadRouteGraphButton(true);
+    setManageRouteGraphResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -605,6 +611,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callDeleteRouteGraph = async () => {
     setLoadingDeleteRouteGraphButton(true);
+    setManageRouteGraphResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -648,6 +655,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callFetchRouteGraph = async () => {
     setLoadingFetchRouteGraphButton(true);
+    setManageRouteGraphResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -692,6 +700,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
   const callListRouteGraphs = async () => {
     setLoadingListRouteGraphsButton(true);
+    setListRouteGraphsResponse(null);
     setError(undefined);
 
     // Parse & guard for input
@@ -734,7 +743,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     padding: 24,
     gridAutoRows: "minmax(0, auto)",
 
-    height: "100%",
+    maxHeight: "100%",
     overflowY: "auto",
   };
   const titleStyle: React.CSSProperties = {
@@ -897,8 +906,12 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const addRouteNodeButtonHoverStyle: React.CSSProperties = addRouteNodeHoveringButton
     ? { backgroundColor: "#018c08" } : {};
+  const addRouteNodeButtonLoadingStyle: React.CSSProperties = loadingAddRouteNodeButton
+    ? { backgroundColor: "gray" } : {};
   const addRouteEdgeButtonHoverStyle: React.CSSProperties = addRouteEdgeHoveringButton
     ? { backgroundColor: "#018c08" } : {};
+  const addRouteEdgeButtonLoadingStyle: React.CSSProperties = loadingAddRouteEdgeButton
+    ? { backgroundColor: "gray" } : {};
 
   const deleteButtonStyle: React.CSSProperties = {
     alignSelf: "center",
@@ -920,10 +933,16 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const deleteRouteNodeButtonHoverStyle: React.CSSProperties = deleteRouteNodeHoveringButton
     ? { backgroundColor: "#ba0000" } : {};
+  const deleteRouteNodeButtonLoadingStyle: React.CSSProperties = loadingDeleteRouteNodeButton
+    ? { backgroundColor: "gray" } : {};
   const deleteRouteEdgeButtonHoverStyle: React.CSSProperties = deleteRouteEdgeHoveringButton
     ? { backgroundColor: "#ba0000" } : {};
+  const deleteRouteEdgeButtonLoadingStyle: React.CSSProperties = loadingDeleteRouteEdgeButton
+    ? { backgroundColor: "gray" } : {};
   const deleteRouteGraphButtonHoverStyle: React.CSSProperties = deleteRouteGraphHoveringButton
     ? { backgroundColor: "#ba0000" } : {};
+  const deleteRouteGraphButtonLoadingStyle: React.CSSProperties = loadingDeleteRouteGraphButton
+    ? { backgroundColor: "gray" } : {};
 
   const editButtonStyle: React.CSSProperties = {
     alignSelf: "center",
@@ -945,6 +964,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const editButtonHoverStyle: React.CSSProperties = editRouteNodeHoveringButton
     ? { backgroundColor: "#006bb3" } : {};
+  const editRouteNodeButtonLoadingStyle: React.CSSProperties = loadingEditRouteNodeButton
+    ? { backgroundColor: "gray" } : {};
   
   const loadButtonStyle: React.CSSProperties = {
     alignSelf: "center",
@@ -966,6 +987,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const loadButtonHoverStyle: React.CSSProperties = loadRouteGraphHoveringButton
     ? { backgroundColor: "#006bb3" } : {};
+  const loadRouteGraphButtonLoadingStyle: React.CSSProperties = loadingLoadRouteGraphButton
+    ? { backgroundColor: "gray" } : {};
   
   const fetchButtonStyle: React.CSSProperties = {
     alignSelf: "center",
@@ -987,6 +1010,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const fetchButtonHoverStyle: React.CSSProperties = fetchRouteGraphHoveringButton
     ? { backgroundColor: "#006bb3" } : {};
+  const fetchRouteGraphButtonLoadingStyle: React.CSSProperties = loadingFetchRouteGraphButton
+    ? { backgroundColor: "gray" } : {};
   
   const listButtonStyle: React.CSSProperties = {
     alignSelf: "center",
@@ -1008,6 +1033,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const listButtonHoverStyle: React.CSSProperties = listRouteGraphsHoveringButton
     ? { backgroundColor: "#006bb3" } : {};
+  const listRouteGraphsButtonLoadingStyle: React.CSSProperties = loadingListRouteGraphsButton
+    ? { backgroundColor: "gray" } : {};
 
   const responseStyle: React.CSSProperties = {
     display: "flex",
@@ -1193,6 +1220,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...addButtonStyle, 
             ...addRouteNodeButtonHoverStyle, 
+            ...addRouteNodeButtonLoadingStyle,
             marginTop: "auto",
           }}
           onClick={callAddRouteNode}
@@ -1234,7 +1262,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
         <button
           style={{ 
             ...deleteButtonStyle, 
-            ...deleteRouteNodeButtonHoverStyle, 
+            ...deleteRouteNodeButtonHoverStyle,
+            ...deleteRouteNodeButtonLoadingStyle,
             marginTop: "auto",
           }}
           onClick={callDeleteRouteNode}
@@ -1341,7 +1370,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           <button
             style={{ 
               ...editButtonStyle, 
-              ...editButtonHoverStyle, 
+              ...editButtonHoverStyle,
+              ...editRouteNodeButtonLoadingStyle, 
               marginTop: "auto",
             }}
             onClick={callEditRouteNode}
@@ -1474,6 +1504,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...addButtonStyle, 
             ...addRouteEdgeButtonHoverStyle, 
+            ...addRouteEdgeButtonLoadingStyle,
             marginTop: "auto",
           }}
           onClick={callAddRouteEdge}
@@ -1517,6 +1548,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...deleteButtonStyle, 
             ...deleteRouteEdgeButtonHoverStyle, 
+            ...deleteRouteEdgeButtonLoadingStyle,
             marginTop: "auto",
           }}
           onClick={callDeleteRouteEdge}
@@ -1583,6 +1615,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...loadButtonStyle, 
             ...loadButtonHoverStyle, 
+            ...loadRouteGraphButtonLoadingStyle,
             marginBottom: 14,
           }}
           onClick={callLoadRouteGraph}
@@ -1598,6 +1631,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...deleteButtonStyle, 
             ...deleteRouteGraphButtonHoverStyle, 
+            ...deleteRouteGraphButtonLoadingStyle,
           }}
           onClick={callDeleteRouteGraph}
           disabled={loadingDeleteRouteGraphButton}
@@ -1617,6 +1651,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...fetchButtonStyle, 
             ...fetchButtonHoverStyle, 
+            ...fetchRouteGraphButtonLoadingStyle,
             marginBottom: 14,
           }}
           onClick={callFetchRouteGraph}
@@ -1663,6 +1698,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           style={{ 
             ...listButtonStyle, 
             ...listButtonHoverStyle,
+            ...listRouteGraphsButtonLoadingStyle,
           }}
           onClick={callListRouteGraphs}
           disabled={loadingListRouteGraphsButton}
