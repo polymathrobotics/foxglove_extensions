@@ -252,13 +252,13 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       setLoadingAddRouteNodeButton(false);
       return;
     }
-    const parsed_add_route_node_x_val = parseInt(addRouteNodeXInputValue, 10);
+    const parsed_add_route_node_x_val = parseFloat(addRouteNodeXInputValue);
     if (isNaN(parsed_add_route_node_x_val)) {
       setError("Please enter a valid pose x value");
       setLoadingAddRouteNodeButton(false);
       return;
     }
-    const parsed_add_route_node_y_val = parseInt(addRouteNodeYInputValue, 10);
+    const parsed_add_route_node_y_val = parseFloat(addRouteNodeYInputValue);
     if (isNaN(parsed_add_route_node_y_val)) {
       setError("Please enter a valid pose y value");
       setLoadingAddRouteNodeButton(false);
@@ -385,13 +385,13 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       setLoadingEditRouteNodeButton(false);
       return;
     }
-    const parsed_edit_route_node_x_val = parseInt(editRouteNodeXInputValue, 10);
+    const parsed_edit_route_node_x_val = parseFloat(editRouteNodeXInputValue);
     if (isNaN(parsed_edit_route_node_x_val)) {
       setError("Please enter a valid pose x value");
       setLoadingEditRouteNodeButton(false);
       return;
     }
-    const parsed_edit_route_node_y_val = parseInt(editRouteNodeYInputValue, 10);
+    const parsed_edit_route_node_y_val = parseFloat(editRouteNodeYInputValue);
     if (isNaN(parsed_edit_route_node_y_val)) {
       setError("Please enter a valid pose y value");
       setLoadingEditRouteNodeButton(false);

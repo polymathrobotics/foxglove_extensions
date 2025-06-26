@@ -4,7 +4,7 @@
   "description": "Extension to request Route Navigation",
   "publisher": "Polymath Robotics",
   "homepage": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "UNLICENSED",
   "main": "./dist/extension.js",
   "keywords": [],

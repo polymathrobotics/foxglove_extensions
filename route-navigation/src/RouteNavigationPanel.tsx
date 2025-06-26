@@ -145,13 +145,13 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     setResponse(null);
 
     // Parse & guard for input
-    const parsed_goal_pose_x_val = parseInt(poseXInputValue, 10);
+    const parsed_goal_pose_x_val = parseFloat(poseXInputValue);
     if (isNaN(parsed_goal_pose_x_val)) {
       setError("Please enter a valid pose x value");
       setLoadingPoseButton(false);
       return;
     }
-    const parsed_goal_pose_y_val = parseInt(poseYInputValue, 10);
+    const parsed_goal_pose_y_val = parseFloat(poseYInputValue);
     if (isNaN(parsed_goal_pose_y_val)) {
       setError("Please enter a valid pose y value");
       setLoadingPoseButton(false);
