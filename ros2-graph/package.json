@@ -4,7 +4,7 @@
   "description": "Visualization and information on nodes, topics and other ROS2 Graph data",
   "publisher": "Polymath Robotics",
   "homepage": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "UNLICENSED",
   "main": "./dist/extension.js",
   "keywords": [],
@@ -34,7 +34,9 @@
     "typescript": "5.8.3"
   },
   "dependencies": {
+    "@foxglove/rostime": "^1.1.2",
     "dagre": "^0.8.5",
+    "react-json-tree": "^0.20.0",
     "reactflow": "^11.11.4"
   }
 }

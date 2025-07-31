@@ -1,173 +1,119 @@
-import { PanelExtensionContext } from "@foxglove/extension";
-import { useState } from "react";
+import { PanelExtensionContext, Topic } from "@foxglove/extension";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import "reactflow/dist/style.css";
 
-
 // Custom
-import type { 
-  ROS2GraphMessage,
-  GetROS2GraphResponse,
- } from "./ROS2GraphData"
-import { TreeViewComponent } from "./ListView"
 import { GraphViewComponent } from "./GraphView";
-
+import { DEFAULT_TOPIC_NAME, ROS2_GRAPH_SCHEMA_NAME } from "./constants";
+import type { ROS2GraphMessage } from "./types";
 
 function ROS2GraphPanel({ context }: { context: PanelExtensionContext }) {
+  const [topicName, setTopicName] = useState<string | undefined>(DEFAULT_TOPIC_NAME);
   const [graphData, setGraphData] = useState<ROS2GraphMessage>();
-  const [hoveringButton, setHoveringButton] = useState(false);
-  const [loadingButton, setLoadingButton] = useState(false);
-  const [viewMode, setViewMode] = useState<"list" | "graph">("graph");
-  const [hoveringListViewTab, setHoveringListViewTab] = useState(false);
-  const [hoveringGraphViewTab, setHoveringGraphViewTab] = useState(false);
-  context;
+  const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
+  const [topics, setTopics] = useState<Topic[]>([]);
 
-  const callGetROS2Graph = async () => {
-    setLoadingButton(true);
-    setGraphData(undefined);
+  console.log(graphData);
 
-    // Call service
-    try {
-      const raw = await context.callService?.("/get_ros2_graph", {});
-      const res = raw as GetROS2GraphResponse;
-      if (res?.success && res.message) {
-        const parsed: ROS2GraphMessage = JSON.parse(res.message);
-        setGraphData(parsed);
+  useLayoutEffect(() => {
+    context.watch("currentFrame");
+    context.watch("topics");
+
+    context.onRender = (renderState, done) => {
+      setRenderDone(() => done);
+      if (renderState.topics != null) {
+        setTopics(renderState.topics as Topic[]);
       }
-    } catch (err) {} 
-    finally {
-      setLoadingButton(false);
+
+      const lastMessage = renderState.currentFrame?.[renderState.currentFrame.length - 1];
+      console.log("lastMessage", lastMessage);
+      if (lastMessage?.message != null) {
+        setGraphData(lastMessage.message as ROS2GraphMessage);
+      }
+    };
+  }, [context]);
+
+  useEffect(() => {
+    if (topicName != null) {
+      console.log("subscribing to topic", topicName);
+      context.subscribe([{ topic: topicName }]);
     }
-  };
+  }, [context, topicName]);
 
-  const blockStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    flexShrink: 1,
-    borderRadius: 4,
-    overflowX: "auto",
-    whiteSpace: "nowrap",
-    maxWidth: "100%",
-    maxHeight: "100%",
-    height: "100%",
-    padding: "10px",
-    border: "1px solid gray",
-    placeSelf: "stretch",
-    overflowY: "auto",
-  };
+  // Create a list of valid topic names that can be subscribed to
+  const validTopicNames = useMemo(() => {
+    // Create a list of valid topic names that can be subscribed to
+    const output = topics.filter((t) => t.schemaName === ROS2_GRAPH_SCHEMA_NAME).map((t) => t.name);
+    // If a topic name is filled in that doesn't appear in the list, force add it to the top
+    // so the setting is not lost
+    if (topicName && !output.includes(topicName)) {
+      output.unshift(topicName);
+    }
+    return output;
+  }, [topics, topicName]);
 
-  const buttonStyle: React.CSSProperties = {
-    display: "flex",
-    placeSelf: "center",
-    flexShrink: 1,
-    overflow: "hidden", 
-    textOverflow: "ellipsis",
-    maxWidth: "70%",
-    whiteSpace: "nowrap",
-    padding: "10px 30px",
-    border: "none",
-    borderRadius: 2,
-    backgroundColor: "#0079ca",
-    fontSize: "0.73rem",
-    fontWeight: "bold",
-    color: "#fff",
-    cursor: "pointer",
-    transition: "background-color 0.2s ease",
-    marginTop: 20,
-    marginBottom: 20,
-  };
-  const buttonHoverStyle: React.CSSProperties = hoveringButton
-    ? { backgroundColor: "#006bb3" } : {};
-  
-  const viewTabStyle: React.CSSProperties = {
-    display: "flex",
-    placeSelf: "center",
-    flexShrink: 1,
-    overflow: "hidden", 
-    textOverflow: "ellipsis",
-    maxWidth: "100%",
-    width: "fit-content",
-    height: "fit-content",
-    whiteSpace: "nowrap",
-    padding: "4px 8px",
-    border: "none",
-    borderRadius: 2,
-    backgroundColor: "transparent",
-    fontSize: "0.73rem",
-    color: "#888",
-    cursor: "pointer",
-    transition: "background-color 0.2s ease",
-    marginTop: 15,
-  };
-  const listViewTabHoverStyle: React.CSSProperties = hoveringListViewTab
-    ? { backgroundColor: "#1f1f26" } : {};
-  const graphViewTabHoverStyle: React.CSSProperties = hoveringGraphViewTab
-    ? { backgroundColor: "#1f1f26" } : {};
+  useEffect(() => {
+    context.updatePanelSettingsEditor({
+      actionHandler: (action) => {
+        // This action handler callback is called when the user interacts with the panel settings.
+        // We only care about settings field updates, so ignore all other actions
+        const path = action.payload.path.join(".");
+        if (action.action !== "update") {
+          return;
+        }
+
+        if (path === "data.topic") {
+          const topic = typeof action.payload.value === "string" ? action.payload.value : undefined;
+          setTopicName(topic);
+        }
+      },
+      nodes: {
+        data: {
+          label: "Data",
+          fields: {
+            topic: {
+              input: "autocomplete",
+              label: "Topic",
+              help: "A `rosgraph` message topic to subscribe to",
+              items: validTopicNames,
+              value: topicName,
+              error: undefined,
+            },
+          },
+        },
+      },
+    });
+  }, [context, topicName, validTopicNames]);
+
+  useEffect(() => renderDone?.(), [renderDone]);
+
+  if (!graphData) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        No graph data available
+      </div>
+    );
+  }
 
   return (
-    <div style={{ 
-      height: "100%", 
-      display: "flex", 
-      flexDirection: "column",
-      paddingLeft: "2em",
-      paddingRight: "2em",
-      paddingTop: "1em",
-      paddingBottom: "1em",
-      width: "100%",
-      }}>
-
-      {/* Tab Selector */}
-      <div style={{ display: "flex" }}>
-        <button
-          style={{ 
-            ...viewTabStyle, 
-            ...graphViewTabHoverStyle, 
-            backgroundColor: viewMode === "graph" || hoveringGraphViewTab ? "#1f1f26" : "transparent",
-            color: viewMode === "graph" ? "#fff" : "#888",
-          }}
-          onClick={() => setViewMode("graph")}
-          onMouseEnter={() => setHoveringGraphViewTab(true)}
-          onMouseLeave={() => setHoveringGraphViewTab(false)}
-          >Graph View</button>
-        <button 
-          style={{ 
-            ...viewTabStyle, 
-            ...listViewTabHoverStyle,
-            backgroundColor: viewMode === "list" || hoveringListViewTab ? "#1f1f26" : "transparent",
-            color: viewMode === "list" ? "#fff" : "#888",
-          }}
-          onClick={() => setViewMode("list")}
-          onMouseEnter={() => setHoveringListViewTab(true)}
-          onMouseLeave={() => setHoveringListViewTab(false)}
-          >List View</button>
-      </div>
-
-      <div style={blockStyle}>
-        {/* Active View */}
-        <div style={{ flex: 1, overflow: "auto" }}>
-          {viewMode === "graph" ? (
-            <GraphViewComponent graphData={graphData} />
-          ) : (
-            <TreeViewComponent graphData={graphData} />
-          )}
-        </div>
-      </div>
-
-      <div>
-        <button
-          style={{ 
-            ...buttonStyle, 
-            ...buttonHoverStyle, 
-          }}
-          onClick={callGetROS2Graph}
-          disabled={loadingButton}
-          onMouseEnter={() => setHoveringButton(true)}
-          onMouseLeave={() => setHoveringButton(false)}
-        >
-          {loadingButton ? "Loading…" : "Refresh Graph"}
-        </button>
-      </div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+      }}
+    >
+      <GraphViewComponent graphData={graphData} />
     </div>
   );
 }
