@@ -109,7 +109,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
     let parsed_topic_profile_val = "";
     if(selectedMode === 1) {
       parsed_include_topics_val = includeTopics.split(",").map(topic => topic.trim()).filter(topic => topic !== "");
-    } 
+    }
     if(selectedMode === 2) {
       parsed_exclude_topics_val = excludeTopics.split(",").map(topic => topic.trim()).filter(topic => topic !== "");
     }
@@ -205,7 +205,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
   };
   const labelTextStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
     paddingLeft: "5px",
@@ -220,7 +220,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
   };
 
   const inputDataStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 12,
@@ -235,7 +235,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
     marginBottom: 4,
 
     maxWidth: "100%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
   const inputBagSuffixHoverStyle: React.CSSProperties = hoveringInputBagSuffix ? {
@@ -258,7 +258,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
   const startButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -278,11 +278,11 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
     ? { backgroundColor: "#018c08" } : {};
   const startButtonLoadingStyle: React.CSSProperties = loadingStartButton || loadingButtons
     ? { backgroundColor: "gray" } : {};
-  
+
   const stopButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -306,7 +306,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
   const getStatusButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -326,13 +326,13 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
     ? { backgroundColor: "#006bb3" } : {};
   const getStatusButtonLoadingStyle: React.CSSProperties = loadingGetStatusButton || loadingButtons
     ? { backgroundColor: "gray" } : {};
-  
+
   const responseStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
     flexShrink: 1,
     borderRadius: 4,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "90%",
     padding: "20px",
@@ -352,11 +352,11 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
 
   return (
     <div style={panelStyle}>
-      
+
       <div style={{
-        whiteSpace: "nowrap", 
-        marginTop: "2px", 
-        placeSelf: "center", 
+        whiteSpace: "nowrap",
+        marginTop: "2px",
+        placeSelf: "center",
         width: "100%",
       }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Bag Suffix</label>
@@ -367,9 +367,9 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
           onChange={e => setBagSuffixInputValue(e.target.value)}
           onMouseEnter={() => setHoveringInputBagSuffix(true)}
           onMouseLeave={() => setHoveringInputBagSuffix(false)}
-          style={{ 
-            ...inputDataStyle , 
-            ...inputBagSuffixHoverStyle, 
+          style={{
+            ...inputDataStyle ,
+            ...inputBagSuffixHoverStyle,
             width: "70%",
             alignSelf: "center",
             marginLeft: "45px",
@@ -378,9 +378,9 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        whiteSpace: "nowrap", 
-        marginTop: "2px", 
-        placeSelf: "center", 
+        whiteSpace: "nowrap",
+        marginTop: "2px",
+        placeSelf: "center",
         width: "100%",
       }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Record Duration</label>
@@ -391,9 +391,9 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
           onChange={e => setRecordDurationInputValue(e.target.value)}
           onMouseEnter={() => setHoveringInputRecordDuration(true)}
           onMouseLeave={() => setHoveringInputRecordDuration(false)}
-          style={{ 
-            ...inputDataStyle , 
-            ...inputRecordDurationHoverStyle, 
+          style={{
+            ...inputDataStyle ,
+            ...inputRecordDurationHoverStyle,
             width: "70%",
             alignSelf: "center",
             marginLeft: "10px",
@@ -401,24 +401,24 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
         />
       </div>
 
-      <div style={{ 
-        whiteSpace: "nowrap", 
-        marginTop: "2px", 
-        placeSelf: "center", 
-        width: "100%" 
+      <div style={{
+        whiteSpace: "nowrap",
+        marginTop: "2px",
+        placeSelf: "center",
+        width: "100%"
       }}>
         <label style={{
-          ...labelTextStyle, 
+          ...labelTextStyle,
           fontWeight: "bold"
         }}>Topic Selection</label>
         <select
           value={selectedMode}
           onChange={e => setSelectedMode(Number(e.target.value))}
-          style={{ 
-            marginLeft: "15px", 
-            fontSize: 12, 
-            padding: "4px", 
-            borderRadius: 4, 
+          style={{
+            marginLeft: "15px",
+            fontSize: 12,
+            padding: "4px",
+            borderRadius: 4,
             lineHeight: 1.4,
             background: "var(--foxglove-panel-surface)",
             color: "var(--foxglove-text-primary)",
@@ -442,11 +442,11 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setIncludeTopics(e.target.value)}
             onMouseEnter={() => setHoveringIncludeTopics(true)}
             onMouseLeave={() => setHoveringIncludeTopics(false)}
-            style={{ 
-              ...inputDataStyle, 
+            style={{
+              ...inputDataStyle,
               ...inputIncludeTopicsHoverStyle,
-              width: "100%", 
-              alignSelf: "center" 
+              width: "100%",
+              alignSelf: "center"
             }}
             placeholder="topic1,topic2,topic3"
           />
@@ -461,11 +461,11 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setExcludeTopics(e.target.value)}
             onMouseEnter={() => setHoveringExcludeTopics(true)}
             onMouseLeave={() => setHoveringExcludeTopics(false)}
-            style={{ 
-              ...inputDataStyle, 
+            style={{
+              ...inputDataStyle,
               ...inputExcludeTopicsHoverStyle,
-              width: "100%", 
-              alignSelf: "center" 
+              width: "100%",
+              alignSelf: "center"
             }}
             placeholder="topicA,topicB"
           />
@@ -480,19 +480,19 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setTopicProfile(e.target.value)}
             onMouseEnter={() => setHoveringTopicProfile(true)}
             onMouseLeave={() => setHoveringTopicProfile(false)}
-            style={{ 
-              ...inputDataStyle, 
+            style={{
+              ...inputDataStyle,
               ...inputTopicProfileHoverStyle,
-              width: "70%", 
-              alignSelf: "center" 
+              width: "70%",
+              alignSelf: "center"
             }}
           />
         </div>
       )}
 
       <button
-        style={{ 
-          ...startButtonStyle, 
+        style={{
+          ...startButtonStyle,
           ...startButtonHoverStyle,
           ...startButtonLoadingStyle,
         }}
@@ -505,8 +505,8 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
       </button>
 
       <button
-        style={{ 
-          ...stopButtonStyle, 
+        style={{
+          ...stopButtonStyle,
           ...stopButtonHoverStyle,
           ...stopButtonLoadingStyle,
         }}
@@ -521,20 +521,20 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
       {(
         <pre style={{ ...responseStyle }}>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             }}><strong>success:</strong> {" "}
             {start_stop_bag_recording_response?.success.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "wrap",
             }}><strong>bag_name:</strong> {" "}
             {start_stop_bag_recording_response?.bag_name.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "wrap",
             }}><strong>error:</strong> {" "}
@@ -551,8 +551,8 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
       {/* Get Bag Recording Status */}
 
       <button
-        style={{ 
-          ...getStatusButtonStyle, 
+        style={{
+          ...getStatusButtonStyle,
           ...getStatusButtonHoverStyle,
           ...getStatusButtonLoadingStyle,
         }}
@@ -562,7 +562,7 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
         onMouseLeave={() => setHoveringGetStatusButton(false)}
       >
         {loadingButtons ? (loadingGetStatusButton ? "Requesting…" : "Get Status") : "Get Status"}
-      </button> 
+      </button>
 
       {/* Recording Status Indicator */}
       {get_bag_recording_status_response && get_bag_recording_status_response?.success && (
@@ -602,38 +602,38 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
       {(
         <pre style={{ ...responseStyle }}>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             }}><strong>success:</strong> {" "}
             {get_bag_recording_status_response?.success.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "wrap",
             }}><strong>error:</strong> {" "}
             {get_bag_recording_status_response?.error.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             }}><strong>is_recording:</strong> {" "}
             {get_bag_recording_status_response?.is_recording.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             }}><strong>bag_name:</strong> {" "}
             {get_bag_recording_status_response?.bag_name.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             }}><strong>time_elapsed(s):</strong> {" "}
             {get_bag_recording_status_response?.time_elapsed.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "wrap",
             }}><strong>recorded_topics:</strong> {" "}
@@ -648,20 +648,20 @@ function BagRecorderPanel({ context }: { context: PanelExtensionContext }) {
 
       {error && (
         <div style={{
-          ...commonCellStyle, 
+          ...commonCellStyle,
           }}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             fontWeight: "bold",
-            color: "crimson", 
+            color: "crimson",
             paddingBottom: "0px",
             }}>Error</label>
           <pre style={{ ...responseStyle }}>
-            <div style={{ 
+            <div style={{
               color: "crimson",
-              gridColumn: "1 / span 1", 
-              overflow: "hidden", 
-              textOverflow: "ellipsis", 
+              gridColumn: "1 / span 1",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
               whiteSpace: "wrap",
               }}>{error}</div>
           </pre>

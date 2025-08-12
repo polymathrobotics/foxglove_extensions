@@ -12,7 +12,7 @@ type RouteNavigationRequest = {
       options: {
         path_option: {
           name: string;
-          params: 
+          params:
             {
               key: string;
               value: string;
@@ -294,7 +294,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
       setLoadingNameButton(false);
     }
   };
-  
+
 
   // Styles ------------------------
   // Common
@@ -308,21 +308,21 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
   };
   const titleStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     fontSize: 22,
     maxWidth: "100%",
     fontWeight: "bold",
   };
   const descriptionStyle: React.CSSProperties = {
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
     padding: "0px 2px",
   };
   const labelTextStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
   };
@@ -335,7 +335,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     alignSelf: "center",
 
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
     whiteSpace: "nowrap",
@@ -356,7 +356,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     flexDirection: "column",
     flexShrink: 1,
     borderRadius: 4,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "90%",
     padding: "20px",
@@ -364,14 +364,14 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     placeSelf: "center",
     minWidth: "90%",
   }
-  
+
   // Styles for requesting by pose
   const poseXYLabelTextStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
     maxWidth: "100%",
   };
   const inputXYStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 13,
@@ -384,7 +384,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     textAlign: "center",
 
     maxWidth: "85%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
   const inputHoverXStyle: React.CSSProperties = hoveringInputX ? {
@@ -400,7 +400,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
 
   // Styles for requesting by ID
   const inputIDStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 13,
@@ -413,10 +413,10 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     textAlign: "center",
 
     maxWidth: "100%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
-  const inputIDHoverStyle: React.CSSProperties = hoveringInputID 
+  const inputIDHoverStyle: React.CSSProperties = hoveringInputID
     ? {
     borderColor: "#fff",
   } : {};
@@ -427,7 +427,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
 
   // Styles for requesting by name
   const inputNameStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 13,
@@ -440,7 +440,7 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
     textAlign: "center",
 
     maxWidth: "100%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
   const inputNameHoverStyle: React.CSSProperties = hoveringInputName ? {
@@ -491,8 +491,8 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
           />
       </div>
       <button
-        style={{ 
-          ...buttonStyle, 
+        style={{
+          ...buttonStyle,
           ...buttonPoseHoverStyle,
           ...buttonPoseLoadingStyle,
         }}
@@ -521,8 +521,8 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <button
-        style={{ 
-          ...buttonStyle, 
+        style={{
+          ...buttonStyle,
           ...buttonIDHoverStyle,
           ...buttonIDLoadingStyle,
         }}
@@ -551,8 +551,8 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <button
-        style={{ 
-          ...buttonStyle, 
+        style={{
+          ...buttonStyle,
           ...buttonNameHoverStyle,
           ...buttonNameLoadingStyle,
         }}
@@ -572,13 +572,13 @@ function RouteNavigationPanel({ context }: { context: PanelExtensionContext }) {
       {(
         <pre style={{ ...responseStyle }}>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             }}><strong>success:</strong> {" "}
             {response?.success.toString() ?? ""}
           </div>
           <div style={{
-            overflow: "hidden", 
+            overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "wrap",
             }}><strong>message:</strong> {" "}
