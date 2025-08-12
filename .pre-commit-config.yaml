@@ -100,6 +100,15 @@ repos:
           --comment-style, '//',
           --allow-past-years,
         ]
+      - id: insert-license
+        types_or: [ts, tsx]
+        name: Copyright headers for TypeScript/JavaScript
+        args: [
+          --license-filepath, .config/copyright.txt,
+          --comment-style, '//',
+          --allow-past-years,
+          --no-extra-eol,
+        ]
   # Ansible
   # - repo: https://github.com/ansible/ansible-lint
   #   rev: v25.1.3

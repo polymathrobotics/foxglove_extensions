@@ -5,7 +5,7 @@
   "publisher": "Polymath Robotics",
   "homepage": "",
   "version": "0.0.3",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "main": "./dist/extension.js",
   "keywords": [],
   "scripts": {

@@ -1,5 +1,5 @@
 # foxglove_extensions
-Polymath-custom extensions for Foxglove
+Polymath-custom extensions for Foxglove.
 
 ### Activating Code Standard Hooks
 
