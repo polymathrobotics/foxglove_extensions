@@ -40,4 +40,3 @@ export type CortexCommandResponse = {
   success: boolean;
   message: string;
 };
-

@@ -118,7 +118,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   const [hoveringInputAddRouteNodeName, setHoveringInputAddRouteNodeName] = useState(false);
   const [addRouteNodeHoveringButton, setAddRouteNodeHoveringButton] = useState(false);
   const [loadingAddRouteNodeButton, setLoadingAddRouteNodeButton] = useState(false);
- 
+
   // For deleting route node
   const delete_route_node_id_restored =
     typeof context.initialState === "object" &&
@@ -171,7 +171,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   // ------------------------------------
   // Route Edge Management --------------
 
-  // Adding route edge 
+  // Adding route edge
   const [modify_route_edge_response, setModifyRouteEdgeResponse] = useState<ModifyRouteEdgeResponse | null>(null);
   const add_route_edge_from_id_restored =
     typeof context.initialState === "object" &&
@@ -274,8 +274,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       node: {
         node_id: 0,
         position: {
-          x: parsed_add_route_node_x_val, 
-          y: parsed_add_route_node_y_val, 
+          x: parsed_add_route_node_x_val,
+          y: parsed_add_route_node_y_val,
           z: 0
         },
         node_name: parsed_add_route_node_name_val
@@ -407,8 +407,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       node: {
         node_id: parsed_edit_route_node_id_val,
         position: {
-          x: parsed_edit_route_node_x_val, 
-          y: parsed_edit_route_node_y_val, 
+          x: parsed_edit_route_node_x_val,
+          y: parsed_edit_route_node_y_val,
           z: 0
         },
         node_name: parsed_edit_route_node_name_val
@@ -732,7 +732,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       setLoadingListRouteGraphsButton(false);
     }
   };
-  
+
   // ------------------------------------
 
   // Styles ------------------
@@ -748,7 +748,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const titleStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     fontSize: 24,
     maxWidth: "100%",
@@ -756,7 +756,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     gridColumn: "1 / span 4",
   };
   const descriptionStyle: React.CSSProperties = {
-    overflow: "hidden", 
+    overflow: "hidden",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     maxWidth: "100%",
@@ -772,14 +772,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   };
   const labelCommonDataTextStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
     padding: "10px",
     fontSize: 11,
   };
   const inputCommonDataStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 12,
@@ -793,7 +793,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     alignSelf: "center",
 
     maxWidth: "70%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
   const inputMapIDHoverStyle: React.CSSProperties = hoveringInputMapID ? {
@@ -803,7 +803,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     borderColor: "#fff",
   } : {};
 
-  
+
   const routeNodeBlockStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -824,14 +824,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   }
   const labelTextStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
     paddingLeft: "5px",
     paddingBottom: "5px",
   };
   const inputDataStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 12,
@@ -846,7 +846,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     marginBottom: 4,
 
     maxWidth: "100%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
   const inputAddRouteNodeXHoverStyle: React.CSSProperties = hoveringInputAddRouteNodeX ? {
@@ -889,7 +889,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   const addButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -916,7 +916,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   const deleteButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -947,7 +947,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   const editButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -966,11 +966,11 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     ? { backgroundColor: "#006bb3" } : {};
   const editRouteNodeButtonLoadingStyle: React.CSSProperties = loadingEditRouteNodeButton
     ? { backgroundColor: "gray" } : {};
-  
+
   const loadButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "80%",
     whiteSpace: "nowrap",
@@ -989,11 +989,11 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     ? { backgroundColor: "#006bb3" } : {};
   const loadRouteGraphButtonLoadingStyle: React.CSSProperties = loadingLoadRouteGraphButton
     ? { backgroundColor: "gray" } : {};
-  
+
   const fetchButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "80%",
     whiteSpace: "nowrap",
@@ -1012,11 +1012,11 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     ? { backgroundColor: "#006bb3" } : {};
   const fetchRouteGraphButtonLoadingStyle: React.CSSProperties = loadingFetchRouteGraphButton
     ? { backgroundColor: "gray" } : {};
-  
+
   const listButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "80%",
     whiteSpace: "nowrap",
@@ -1041,7 +1041,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
     flexDirection: "column",
     flexShrink: 1,
     borderRadius: 4,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "90%",
     padding: "20px",
@@ -1063,12 +1063,12 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
   // Return
   return (
     <div style={panelStyle}>
-      
+
       <label style={titleStyle}>Route Manager</label>
 
       <div style={descriptionStyle}>
-        Use this panel to interface with Route Manager node to manage route information. 
-        All requests below require a Map ID and a Route graph name. 
+        Use this panel to interface with Route Manager node to manage route information.
+        All requests below require a Map ID and a Route graph name.
       </div>
       <div style={descriptionStyle}>
         Input Instructions:
@@ -1081,7 +1081,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
       <div style={{...commonDataCellStyle, border: "1px solid #ccc",}}>
         <label style={{
-          ...labelCommonDataTextStyle, 
+          ...labelCommonDataTextStyle,
           fontWeight: "bold",
           alignSelf: "center",
           fontSize: 13,
@@ -1110,21 +1110,21 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
       {error && (
         <div style={{
-          ...commonDataCellStyle, 
+          ...commonDataCellStyle,
           gridColumn: "4 / span 1",
           }}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             fontWeight: "bold",
-            color: "crimson", 
+            color: "crimson",
             paddingBottom: "0px",
             }}>Error</label>
           <pre style={{ ...responseStyle }}>
-            <div style={{ 
+            <div style={{
               color: "crimson",
-              gridColumn: "4 / span 1", 
-              overflow: "hidden", 
-              textOverflow: "ellipsis", 
+              gridColumn: "4 / span 1",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
               whiteSpace: "wrap",
               }}>{error}</div>
           </pre>
@@ -1144,16 +1144,16 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             }}>NODE MANAGEMENT</label>
         </div>
       </div>
-        
+
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "1 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Add Node</label>
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             paddingLeft: "15px",
             paddingRight: "22px",
             alignSelf: "center",
@@ -1165,9 +1165,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setAddRouteNodeXInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputAddRouteNodeX(true)}
             onMouseLeave={() => setHoveringInputAddRouteNodeX(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputAddRouteNodeXHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputAddRouteNodeXHoverStyle,
               width: "70%",
             }}
           />
@@ -1187,9 +1187,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setAddRouteNodeYInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputAddRouteNodeY(true)}
             onMouseLeave={() => setHoveringInputAddRouteNodeY(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputAddRouteNodeYHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputAddRouteNodeYHoverStyle,
               width: "70%",
             }}
           />
@@ -1197,7 +1197,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             paddingRight: "5px",
             alignSelf: "center",
             }}>Name:</label>
@@ -1208,18 +1208,18 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setAddRouteNodeNameInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputAddRouteNodeName(true)}
             onMouseLeave={() => setHoveringInputAddRouteNodeName(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputAddRouteNodeNameHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputAddRouteNodeNameHoverStyle,
               width: "70%",
             }}
           />
         </div>
 
         <button
-          style={{ 
-            ...addButtonStyle, 
-            ...addRouteNodeButtonHoverStyle, 
+          style={{
+            ...addButtonStyle,
+            ...addRouteNodeButtonHoverStyle,
             ...addRouteNodeButtonLoadingStyle,
             marginTop: "auto",
           }}
@@ -1231,16 +1231,16 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
           {loadingAddRouteNodeButton ? "Requesting…" : "Add"}
         </button>
       </div>
-    
+
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "2 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Delete Node</label>
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             paddingRight: "5px",
             alignSelf: "center",
             }}>Node ID:</label>
@@ -1251,17 +1251,17 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setDeleteRouteNodeIDInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputDeleteRouteNodeID(true)}
             onMouseLeave={() => setHoveringInputDeleteRouteNodeID(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputDeleteRouteNodeIDHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputDeleteRouteNodeIDHoverStyle,
               width: "60%",
             }}
           />
         </div>
 
         <button
-          style={{ 
-            ...deleteButtonStyle, 
+          style={{
+            ...deleteButtonStyle,
             ...deleteRouteNodeButtonHoverStyle,
             ...deleteRouteNodeButtonLoadingStyle,
             marginTop: "auto",
@@ -1276,14 +1276,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "3 / span 1",
         }}>
           <label style={{...labelTextStyle, fontWeight: "bold",}}>Edit Node</label>
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingRight: "5px",
               alignSelf: "center",
               }}>Node ID:</label>
@@ -1294,9 +1294,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setEditRouteNodeIDInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputEditRouteNodeID(true)}
               onMouseLeave={() => setHoveringInputEditRouteNodeID(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputEditRouteNodeIDHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputEditRouteNodeIDHoverStyle,
                 width: "60%",
               }}
             />
@@ -1304,7 +1304,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               alignSelf: "center",
@@ -1316,9 +1316,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setEditRouteNodeXInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputEditRouteNodeX(true)}
               onMouseLeave={() => setHoveringInputEditRouteNodeX(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputEditRouteNodeXHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputEditRouteNodeXHoverStyle,
                 width: "70%",
               }}
             />
@@ -1326,7 +1326,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               alignSelf: "center",
@@ -1338,9 +1338,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setEditRouteNodeYInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputEditRouteNodeY(true)}
               onMouseLeave={() => setHoveringInputEditRouteNodeY(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputEditRouteNodeYHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputEditRouteNodeYHoverStyle,
                 width: "70%",
               }}
             />
@@ -1348,7 +1348,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingRight: "5px",
               alignSelf: "center",
               }}>Name:</label>
@@ -1359,19 +1359,19 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setEditRouteNodeNameInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputEditRouteNodeName(true)}
               onMouseLeave={() => setHoveringInputEditRouteNodeName(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputEditRouteNodeNameHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputEditRouteNodeNameHoverStyle,
                 width: "70%",
               }}
             />
           </div>
 
           <button
-            style={{ 
-              ...editButtonStyle, 
+            style={{
+              ...editButtonStyle,
               ...editButtonHoverStyle,
-              ...editRouteNodeButtonLoadingStyle, 
+              ...editRouteNodeButtonLoadingStyle,
               marginTop: "auto",
             }}
             onClick={callEditRouteNode}
@@ -1384,26 +1384,26 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "4 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Response</label>
         {(
           <pre style={{ ...responseStyle }}>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               }}><strong>success:</strong> {" "}
               {modify_route_node_response?.success.toString() ?? ""}
             </div>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               }}><strong>node_id:</strong> {" "}
               {modify_route_node_response?.node_id.toString() ?? ""}
             </div>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "wrap",
               }}><strong>message:</strong> {" "}
@@ -1429,14 +1429,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "1 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Add Edge</label>
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             // paddingLeft: "15px",
             paddingRight: "5px",
             alignSelf: "center",
@@ -1448,9 +1448,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setAddRouteEdgeFromIDInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputAddRouteEdgeFromID(true)}
             onMouseLeave={() => setHoveringInputAddRouteEdgeFromID(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputAddRouteEdgeFromIDHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputAddRouteEdgeFromIDHoverStyle,
               width: "60%",
             }}
           />
@@ -1458,7 +1458,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             paddingLeft: "16px",
             paddingRight: "10px",
             alignSelf: "center",
@@ -1470,9 +1470,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setAddRouteEdgeToIDInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputAddRouteEdgeToID(true)}
             onMouseLeave={() => setHoveringInputAddRouteEdgeToID(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputAddRouteEdgeToIDHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputAddRouteEdgeToIDHoverStyle,
               width: "60%",
             }}
           />
@@ -1480,7 +1480,7 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             paddingLeft: "16px",
             paddingRight: "12px",
             alignSelf: "center",
@@ -1492,18 +1492,18 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setAddRouteEdgeEdgeCostInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputAddRouteEdgeEdgeCost(true)}
             onMouseLeave={() => setHoveringInputAddRouteEdgeEdgeCost(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputAddRouteEdgeEdgeCostHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputAddRouteEdgeEdgeCostHoverStyle,
               width: "60%",
             }}
           />
         </div>
 
         <button
-          style={{ 
-            ...addButtonStyle, 
-            ...addRouteEdgeButtonHoverStyle, 
+          style={{
+            ...addButtonStyle,
+            ...addRouteEdgeButtonHoverStyle,
             ...addRouteEdgeButtonLoadingStyle,
             marginTop: "auto",
           }}
@@ -1518,14 +1518,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "2 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Delete Edge</label>
 
         <div style={{whiteSpace: "nowrap", marginTop: "5px",}}>
           <label style={{
-            ...labelTextStyle, 
+            ...labelTextStyle,
             paddingRight: "5px",
             alignSelf: "center",
             }}>Edge ID:</label>
@@ -1536,18 +1536,18 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
             onChange={e => setDeleteRouteEdgeEdgeIDInputValue(e.target.value)}
             onMouseEnter={() => setHoveringInputDeleteRouteEdgeEdgeID(true)}
             onMouseLeave={() => setHoveringInputDeleteRouteEdgeEdgeID(false)}
-            style={{ 
-              ...inputDataStyle , 
-              ...inputDeleteRouteEdgeEdgeIDHoverStyle, 
+            style={{
+              ...inputDataStyle ,
+              ...inputDeleteRouteEdgeEdgeIDHoverStyle,
               width: "60%",
             }}
           />
         </div>
 
         <button
-          style={{ 
-            ...deleteButtonStyle, 
-            ...deleteRouteEdgeButtonHoverStyle, 
+          style={{
+            ...deleteButtonStyle,
+            ...deleteRouteEdgeButtonHoverStyle,
             ...deleteRouteEdgeButtonLoadingStyle,
             marginTop: "auto",
           }}
@@ -1562,26 +1562,26 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "3 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Response</label>
         {(
           <pre style={{ ...responseStyle }}>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               }}><strong>success:</strong> {" "}
               {modify_route_edge_response?.success.toString() ?? ""}
             </div>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               }}><strong>edge_id:</strong> {" "}
               {modify_route_edge_response?.edge_id.toString() ?? ""}
             </div>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "wrap",
               }}><strong>message:</strong> {" "}
@@ -1607,14 +1607,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "1 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Load Route</label>
         <button
-          style={{ 
-            ...loadButtonStyle, 
-            ...loadButtonHoverStyle, 
+          style={{
+            ...loadButtonStyle,
+            ...loadButtonHoverStyle,
             ...loadRouteGraphButtonLoadingStyle,
             marginBottom: 14,
           }}
@@ -1628,9 +1628,9 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
 
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Delete Route</label>
         <button
-          style={{ 
-            ...deleteButtonStyle, 
-            ...deleteRouteGraphButtonHoverStyle, 
+          style={{
+            ...deleteButtonStyle,
+            ...deleteRouteGraphButtonHoverStyle,
             ...deleteRouteGraphButtonLoadingStyle,
           }}
           onClick={callDeleteRouteGraph}
@@ -1643,14 +1643,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "2 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Visualize Route</label>
         <button
-          style={{ 
-            ...fetchButtonStyle, 
-            ...fetchButtonHoverStyle, 
+          style={{
+            ...fetchButtonStyle,
+            ...fetchButtonHoverStyle,
             ...fetchRouteGraphButtonLoadingStyle,
             marginBottom: 14,
           }}
@@ -1664,20 +1664,20 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "3 / span 1",
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>Response</label>
         {(
           <pre style={{ ...responseStyle }}>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               }}><strong>success:</strong> {" "}
               {manage_route_graph_response?.success.toString() ?? ""}
             </div>
             <div style={{
-              overflow: "hidden", 
+              overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "wrap",
               }}><strong>message:</strong> {" "}
@@ -1689,14 +1689,14 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
       </div>
 
       <div style={{
-        ...commonDataCellStyle, 
+        ...commonDataCellStyle,
         gridColumn: "4 / span 1",
         minHeight: 0,
         }}>
         <label style={{...labelTextStyle, fontWeight: "bold",}}>List Routes</label>
         <button
-          style={{ 
-            ...listButtonStyle, 
+          style={{
+            ...listButtonStyle,
             ...listButtonHoverStyle,
             ...listRouteGraphsButtonLoadingStyle,
           }}
@@ -1709,8 +1709,8 @@ function RouteManagerPanel({ context }: { context: PanelExtensionContext }) {
         </button>
 
         {(
-          <pre style={{ 
-              ...responseStyle, 
+          <pre style={{
+              ...responseStyle,
               overflowY: "auto",
               maxHeight: "50%",
               }}>

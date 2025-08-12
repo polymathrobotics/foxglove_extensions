@@ -1,13 +1,13 @@
 import { PanelExtensionContext } from "@foxglove/extension";
 import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { 
-  CortexModifyCommandRequest, 
+import {
+  CortexModifyCommandRequest,
   CortexFlowCommandRequest,
-  CortexCommandResponse 
+  CortexCommandResponse
 } from "./CortexCommands";
 import { formatUtcTimestampToLocalString } from "./utils";
-import { 
+import {
   CortexFeedback,
   getCortexStatusColor,
   getCortexStatusEnum
@@ -109,7 +109,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
       const feedbackMsg = renderState.currentFrame?.find(
         (msg) => msg.topic === "/cortex/feedback"
       );
-      
+
       if (feedbackMsg?.message) {
         setCortexFeedback(feedbackMsg.message as CortexFeedback);
       }
@@ -131,10 +131,10 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
     const parsed_orientation_z_val = parseFloat(orientationZInputValue);
     const parsed_orientation_w_val = parseFloat(orientationWInputValue);
 
-    if (isNaN(parsed_pos_x_val) || 
-        isNaN(parsed_pos_y_val) || 
-        isNaN(parsed_orientation_x_val) || 
-        isNaN(parsed_orientation_y_val) || 
+    if (isNaN(parsed_pos_x_val) ||
+        isNaN(parsed_pos_y_val) ||
+        isNaN(parsed_orientation_x_val) ||
+        isNaN(parsed_orientation_y_val) ||
         isNaN(parsed_orientation_z_val) ||
         isNaN(parsed_orientation_w_val)
       ) {
@@ -260,7 +260,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   };
   const titleStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     fontSize: 18,
     maxWidth: "100%",
@@ -269,7 +269,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   };
   const labelTextStyle: React.CSSProperties = {
     whiteSpace: "nowrap",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "100%",
     paddingLeft: "5px",
@@ -285,7 +285,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   };
 
   const inputDataStyle: React.CSSProperties = {
-    flex: 1, 
+    flex: 1,
     border: "1px solid #ccc",
     fontFamily: "monospace",
     fontSize: 12,
@@ -300,7 +300,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
     marginBottom: 4,
 
     maxWidth: "100%",
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
   };
   const inputFrameIDHoverStyle: React.CSSProperties = hoveringInputFrameID ? {
@@ -328,7 +328,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   const addCommandButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -353,7 +353,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   const stopButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -377,7 +377,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   const pauseButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -401,7 +401,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
   const resumeButtonStyle: React.CSSProperties = {
     alignSelf: "center",
     flexShrink: 1,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "70%",
     whiteSpace: "nowrap",
@@ -428,7 +428,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
     flexDirection: "column",
     flexShrink: 1,
     borderRadius: 4,
-    overflow: "hidden", 
+    overflow: "hidden",
     textOverflow: "ellipsis",
     maxWidth: "90%",
     padding: "20px",
@@ -464,7 +464,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
         <div style={{...titleStyle, }}>Navigation Command</div>
 
         <div style={{
-          ...commonCellStyle, 
+          ...commonCellStyle,
           }}>
 
           <label style={{...labelTextStyle, fontWeight: "bold",}}>Frame ID</label>
@@ -476,20 +476,20 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setFrameIDInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputFrameID(true)}
               onMouseLeave={() => setHoveringInputFrameID(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputFrameIDHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputFrameIDHoverStyle,
                 width: "96%",
                 alignSelf: "center",
               }}
             />
           </div>
-          
+
           <label style={{...labelTextStyle, fontWeight: "bold",}}>Position</label>
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px", placeSelf: "center", width: "70%",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               }}>x:</label>
@@ -500,9 +500,9 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setPosXInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputPosX(true)}
               onMouseLeave={() => setHoveringInputPosX(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputPosXHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputPosXHoverStyle,
                 width: "70%",
               }}
             />
@@ -510,7 +510,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px", placeSelf: "center", width: "70%",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               }}>y:</label>
@@ -521,9 +521,9 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setPosYInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputPosY(true)}
               onMouseLeave={() => setHoveringInputPosY(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputPosYHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputPosYHoverStyle,
                 width: "70%",
               }}
             />
@@ -533,7 +533,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px", placeSelf: "center", width: "70%",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               }}>x:</label>
@@ -544,9 +544,9 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setOrientationXInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputOrientationX(true)}
               onMouseLeave={() => setHoveringInputOrientationX(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputOrientationXHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputOrientationXHoverStyle,
                 width: "70%",
               }}
             />
@@ -554,7 +554,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px", placeSelf: "center", width: "70%",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               }}>y:</label>
@@ -565,9 +565,9 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setOrientationYInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputOrientationY(true)}
               onMouseLeave={() => setHoveringInputOrientationY(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputOrientationYHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputOrientationYHoverStyle,
                 width: "70%",
               }}
             />
@@ -575,7 +575,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px", placeSelf: "center", width: "70%",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "22px",
               }}>z:</label>
@@ -586,9 +586,9 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setOrientationZInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputOrientationZ(true)}
               onMouseLeave={() => setHoveringInputOrientationZ(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputOrientationZHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputOrientationZHoverStyle,
                 width: "70%",
               }}
             />
@@ -596,7 +596,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
 
           <div style={{whiteSpace: "nowrap", marginTop: "5px", placeSelf: "center", width: "70%",}}>
             <label style={{
-              ...labelTextStyle, 
+              ...labelTextStyle,
               paddingLeft: "15px",
               paddingRight: "20px",
               }}>w:</label>
@@ -607,17 +607,17 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               onChange={e => setOrientationWInputValue(e.target.value)}
               onMouseEnter={() => setHoveringInputOrientationW(true)}
               onMouseLeave={() => setHoveringInputOrientationW(false)}
-              style={{ 
-                ...inputDataStyle , 
-                ...inputOrientationWHoverStyle, 
+              style={{
+                ...inputDataStyle ,
+                ...inputOrientationWHoverStyle,
                 width: "70%",
               }}
             />
           </div>
 
           <button
-            style={{ 
-              ...addCommandButtonStyle, 
+            style={{
+              ...addCommandButtonStyle,
               ...addCommandButtonHoverStyle,
               ...addCommandButtonLoadingStyle,
             }}
@@ -628,18 +628,18 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
           >
             {loadingAddCommandButton ? "Requesting…" : "Add Command"}
           </button>
-        
+
           <label style={{...labelTextStyle, fontWeight: "bold",}}>Response</label>
           {(
             <pre style={{ ...responseStyle }}>
               <div style={{
-                overflow: "hidden", 
+                overflow: "hidden",
                 textOverflow: "ellipsis",
                 }}><strong>success:</strong> {" "}
                 {modify_command_response?.success.toString() ?? ""}
               </div>
               <div style={{
-                overflow: "hidden", 
+                overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "wrap",
                 }}><strong>message:</strong> {" "}
@@ -652,10 +652,10 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
 
         <div style={{...commonCellStyle, marginTop: "20px",}}>
           <div style={{...titleStyle, marginTop: "20px",}}>Flow Command</div>
-        
+
           <button
-            style={{ 
-              ...stopButtonStyle, 
+            style={{
+              ...stopButtonStyle,
               ...stopButtonHoverStyle,
               ...stopButtonLoadingStyle,
             }}
@@ -668,8 +668,8 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
           </button>
 
           <button
-            style={{ 
-              ...pauseButtonStyle, 
+            style={{
+              ...pauseButtonStyle,
               ...pauseButtonHoverStyle,
               ...pauseButtonLoadingStyle,
             }}
@@ -682,9 +682,9 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
           </button>
 
           <button
-            style={{ 
-              ...resumeButtonStyle, 
-              ...resumeButtonHoverStyle, 
+            style={{
+              ...resumeButtonStyle,
+              ...resumeButtonHoverStyle,
               ...resumeButtonLoadingStyle,
             }}
             onClick={() => callCortexFlowCommandService(2)}
@@ -699,13 +699,13 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
           {(
             <pre style={{ ...responseStyle }}>
               <div style={{
-                overflow: "hidden", 
+                overflow: "hidden",
                 textOverflow: "ellipsis",
                 }}><strong>success:</strong> {" "}
                 {flow_command_response?.success.toString() ?? ""}
               </div>
               <div style={{
-                overflow: "hidden", 
+                overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "wrap",
                 }}><strong>message:</strong> {" "}
@@ -713,25 +713,25 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               </div>
 
             </pre>
-          )}          
+          )}
         </div>
 
         {error && (
             <div style={{
-              ...commonCellStyle, 
+              ...commonCellStyle,
               }}>
               <label style={{
-                ...labelTextStyle, 
+                ...labelTextStyle,
                 fontWeight: "bold",
-                color: "crimson", 
+                color: "crimson",
                 paddingBottom: "0px",
                 }}>Error</label>
               <pre style={{ ...responseStyle }}>
-                <div style={{ 
+                <div style={{
                   color: "crimson",
-                  gridColumn: "1 / span 1", 
-                  overflow: "hidden", 
-                  textOverflow: "ellipsis", 
+                  gridColumn: "1 / span 1",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                   whiteSpace: "wrap",
                   }}>{error}</div>
               </pre>
@@ -739,7 +739,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
           )}
       </div>
 
-      
+
       <div style={{gridColumn: "2 / span 1",}}>
         <div style={{...titleStyle, }}>Feedback</div>
 
@@ -765,7 +765,7 @@ function CortexPanel({ context }: { context: PanelExtensionContext }) {
               <div style={{ fontSize: "13px", marginBottom: "15px", color: "#fff" }}>
                 {cortexFeedback.cortex_status.description}
               </div>
-            
+
               <TreeView
                 data={(() => {
                   const { timestamp_utc, cortex_status, ...rest } = cortexFeedback;

@@ -1,0 +1,2 @@
+include:
+  - component: gitlab.com/polymathrobotics/polymath_core/pre-commit@ci-1.3

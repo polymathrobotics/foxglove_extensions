@@ -22,8 +22,8 @@ export type CortexFeedback = {
     sec: number;
     nsec: number;
   };
-  cortex_status: { 
-    status: number; 
+  cortex_status: {
+    status: number;
     description: string;
   };
   navigation_feedback: {

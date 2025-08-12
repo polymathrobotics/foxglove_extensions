@@ -14,7 +14,7 @@ export function formatUtcTimestampToLocalString(sec: number, nsec: number): stri
     minute: "2-digit",
     second: "2-digit",
     hour12: true,
-  }).split(" "); 
+  }).split(" ");
 
   const time = timePart[0];
   const ampm = timePart[1];
