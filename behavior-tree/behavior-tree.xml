@@ -1,0 +1,661 @@
+<root BTCPP_format="4">
+  <BehaviorTree ID="Main_Tree" _fullpath="">
+    <ReactiveSequence name="ReactiveSequence" _uid="1">
+      <Fallback name="Fallback" _uid="2">
+        <IsTrue name="IsTrue" _uid="3" boolean="{initialized}" />
+        <Sequence name="Sequence" _uid="4">
+          <NavSatFixSubscriber name="NavSatFixSubscriber" _uid="5" topic_name="/gps/fix"
+            geopose_stamped="{gps_fix_geopose}" />
+          <InitializePoseTransformer name="InitializePoseTransformer" _uid="6"
+            geopose_stamped="{gps_fix_geopose}" />
+          <SetBool name="SetBool" _uid="7" value="true" output="{initialized}" />
+          <SetBool name="SetBool" _uid="8" value="true" output="{resume_requested}" />
+        </Sequence>
+        <Sequence name="Sequence" _uid="9">
+          <SetBool name="SetBool" _uid="10" value="true" output="{stop_requested}" />
+          <SetCortexStatus name="SetCortexStatus" _uid="11" status_input="STOPPED"
+            status_message="Cortex Not Initialized" status_output="{status}" />
+        </Sequence>
+      </Fallback>
+      <ForceSuccess name="ForceSuccess" _uid="12">
+        <ModifyCortexQueueService name="ModifyCortexQueueService" _uid="13"
+          service_name="~/modify_command"
+          vehicle_command_options_vector="{vehicle_command_option_list}"
+          commands_received="{commands_received}" preempt_requested="{preempt_requested}" />
+      </ForceSuccess>
+      <ForceSuccess name="ForceSuccess" _uid="14">
+        <VehicleCommandOptionsService name="VehicleCommandOptionsService" _uid="15"
+          service_name="~/vehicle_command_options"
+          vehicle_command_options="{vehicle_command_option_list}" />
+      </ForceSuccess>
+      <ForceSuccess name="ForceSuccess" _uid="16">
+        <ListReferenceTargetsService name="ListReferenceTargetsService" _uid="17"
+          reference_target_map="{reference_map}" service_name="~/get_reference_targets" />
+      </ForceSuccess>
+      <Fallback name="Fallback" _uid="18">
+        <Inverter name="Inverter" _uid="19">
+          <IsTrue name="IsTrue" _uid="20" boolean="{preempt_requested}" />
+        </Inverter>
+        <Sequence name="Sequence" _uid="21">
+          <ClearQueue name="ClearQueue" _uid="22" queue="{queue}"
+            size_of_queue="{number_of_commands_queued}" />
+          <SetBool name="SetBool" _uid="23" value="false" output="{preempt_requested}" />
+          <AlwaysFailure name="AlwaysFailure" _uid="24" />
+        </Sequence>
+      </Fallback>
+      <ForceSuccess name="ForceSuccess" _uid="25">
+        <AddMultipleToQueue name="AddMultipleToQueue" _uid="26" queue="{queue}"
+          queue_input="{commands_received}" size_of_queue="{number_of_commands_queued}" />
+      </ForceSuccess>
+      <ForceSuccess name="ForceSuccess" _uid="27">
+        <TfToCurrentPose name="TfToCurrentPose" _uid="28" current_geopose="{current_geopose}"
+          current_map_pose="{current_map_pose}" />
+      </ForceSuccess>
+      <ForceSuccess name="ForceSuccess" _uid="29">
+        <CommandCortexFlowService name="CommandCortexFlowService" _uid="30"
+          service_name="~/flow_command" pause_requested="{pause_requested}"
+          resume_requested="{resume_requested}" stop_requested="{stop_requested}" />
+      </ForceSuccess>
+      <ForceSuccess name="ForceSuccess" _uid="31">
+        <ReferenceTargetSubscriber name="ReferenceTargetSubscriber" _uid="32"
+          topic_name="~/reference_targets" reference_targets="{reference_targets}" />
+      </ForceSuccess>
+      <TfReferenceBroadcaster name="TfReferenceBroadcaster" _uid="33" tf_target_parent_frame="map"
+        reference_targets="{reference_targets}" reference_target_map="{reference_map}" />
+      <ForceSuccess name="ForceSuccess" _uid="34">
+        <VehicleFeedbackSubscriber name="VehicleFeedbackSubscriber" _uid="35"
+          topic_name="/hal/vehicle/feedback" vehicle_feedback="{vehicle_feedback}" />
+      </ForceSuccess>
+      <MetricsPublisher name="MetricsPublisher" _uid="36" navigation_feedback="{nav_feedback}"
+        status_message="{status}" />
+      <CortexFeedbackPublisher name="CortexFeedbackPublisher" _uid="37" active_command_index="0"
+        vehicle_feedback="{vehicle_feedback}" current_geopose="{current_geopose}"
+        navigation_feedback="{nav_feedback}" number_of_commands="{number_of_commands_queued}"
+        publisher_name="~/feedback" status_message="{status}" />
+      <ReferenceTargetOdomPublisher name="ReferenceTargetOdomPublisher" _uid="38"
+        target_parent_frame="map" reference_target_map="{reference_map}" />
+      <Fallback name="Fallback" _uid="39">
+        <Inverter name="Inverter" _uid="40">
+          <IsTrue name="IsResumeRequestedTrue" _uid="41" boolean="{resume_requested}" />
+        </Inverter>
+        <Sequence name="Sequence" _uid="42">
+          <SetBool name="SetBool" _uid="43" value="false" output="{stop_requested}" />
+          <SetBool name="SetBool" _uid="44" value="false" output="{resume_requested}" />
+        </Sequence>
+      </Fallback>
+      <Fallback name="Fallback" _uid="45">
+        <Inverter name="Inverter" _uid="46">
+          <IsTrue name="IsStopRequested" _uid="47" boolean="{stop_requested}" />
+        </Inverter>
+        <Sequence name="Sequence" _uid="48">
+          <ClearQueue name="ClearQueue" _uid="49" queue="{queue}"
+            size_of_queue="{number_of_commands_queued}" />
+          <SetCortexStatus name="SetCortexStatus" _uid="50" status_input="STOPPED"
+            status_message="stop triggered" status_output="{status}" />
+          <AlwaysFailure name="AlwaysFailure" _uid="51" />
+        </Sequence>
+      </Fallback>
+      <Fallback name="Fallback" _uid="52">
+        <Inverter name="Inverter" _uid="53">
+          <IsTrue name="IsPauseRequestedTrue" _uid="54" boolean="{pause_requested}" />
+        </Inverter>
+        <Sequence name="Sequence" _uid="55">
+          <SetCortexStatus name="SetCortexStatus" _uid="56" status_input="PAUSED"
+            status_message="pause triggered" status_output="{status}" />
+          <AlwaysFailure name="AlwaysFailure" _uid="57" />
+        </Sequence>
+      </Fallback>
+      <Fallback name="Fallback" _uid="58">
+        <Sequence name="Sequence" _uid="59">
+          <IsQueueEmpty name="IsQueueEmpty" _uid="60" queue="{queue}"
+            size_of_queue="{number_of_commands_queued}" />
+          <SetCortexStatus name="SetCortexStatus" _uid="61" status_input="IDLE"
+            status_message="Queue is empty" status_output="{status}" />
+        </Sequence>
+        <Sequence name="Sequence" _uid="62">
+          <GetFrontOfQueue name="GetFrontOfQueue" _uid="63" queue="{queue}"
+            front_of_queue="{front_queue}" />
+          <Fallback name="Fallback" _uid="64">
+            <Sequence name="Sequence" _uid="65">
+              <IsCortexCommandNav2 name="IsCortexCommandNav2" _uid="66"
+                cortex_command="{front_queue}" />
+              <GetNavPathOption name="GetNavPathOption" _uid="67" cortex_command="{front_queue}"
+                nav_path_option="{nav_path_option}" />
+              <CortexToNavThruPoses name="CortexToNavThruPoses" _uid="68"
+                cortex_command="{front_queue}" current_geopose="{current_geopose}"
+                current_pose="{current_map_pose}" reference_target_map="{reference_map}"
+                target_frame="map" nav2_goal="{nav_goal}" />
+              <Nav2GoalPosePublisher name="Nav2GoalPosePublisher" _uid="69" nav2_goal="{nav_goal}"
+                publisher_name="~/goal_poses" />
+              <Fallback name="Fallback" _uid="70">
+                <Nav2GoalCommander name="Nav2GoalCommander" _uid="71"
+                  action_name="navigate_through_poses" existence_timeout="2" goal="{nav_goal}"
+                  response_timeout="30" cancel_goal_on_halt="false" cortex_status="{status}"
+                  navigation_feedback="{nav_feedback}" />
+                <AlwaysSuccess name="AlwaysSuccess" _uid="72" />
+              </Fallback>
+            </Sequence>
+            <Sequence name="Sequence" _uid="73">
+              <IsCortexCommandFlow name="IsCortexCommandFlow" _uid="74"
+                cortex_command="{front_queue}" />
+              <ProcessFlowCommand name="ProcessFlowCommand" _uid="75" cortex_command="{front_queue}"
+                pause_requested="{pause_requested}" resume_requested="{resume_requested}"
+                stop_requested="{stop_requested}" />
+            </Sequence>
+            <Sequence name="Sequence" _uid="76">
+              <IsCortexCommandVehicle name="IsCortexCommandVehicle" _uid="77"
+                cortex_command="{front_queue}" />
+              <GetVehicleCommandOption name="GetVehicleCommandOption" _uid="78"
+                cortex_command="{front_queue}" vehicle_command_option="{vehicle_command_option}" />
+              <Fallback name="Fallback" _uid="79">
+                <Sequence name="Sequence" _uid="80">
+                  <BoolOption name="BoolOption" _uid="81"
+                    option_description="TRUE representing enabling the vehicle for motion, FALSE representing disable"
+                    option_input="{vehicle_command_option}" option_name="enable_start"
+                    options_vector="{vehicle_command_option_list}"
+                    bool_command_received="{vehicle_enable_start_received}"
+                    bool_command="{vehicle_enable_start}" />
+                  <Fallback name="Fallback" _uid="82">
+                    <Inverter name="Inverter" _uid="83">
+                      <IsTrue name="IsTrue" _uid="84" boolean="{vehicle_enable_start_received}" />
+                    </Inverter>
+                    <Sequence name="Sequence" _uid="85">
+                      <BoolPublisher name="BoolPublisher" _uid="86" bool="{vehicle_enable_start}"
+                        publisher_name="~/vehicle_enable_start" />
+                      <SetBool name="SetBool" _uid="87" value="false"
+                        output="{vehicle_enable_start_received}" />
+                    </Sequence>
+                  </Fallback>
+                </Sequence>
+                <AlwaysSuccess name="AlwaysSuccess" _uid="88" />
+              </Fallback>
+            </Sequence>
+          </Fallback>
+          <PopFrontQueue name="PopFrontQueue" _uid="89" queue="{queue}"
+            front_of_queue="{old_front_queue}" />
+        </Sequence>
+        <SetBool name="SetBool" _uid="90" value="true" output="{stop_requested}" />
+      </Fallback>
+    </ReactiveSequence>
+  </BehaviorTree>
+  <TreeNodesModel>
+    <Action ID="AddMultipleToQueue">
+      <inout_port name="queue_input"
+        type="std::vector&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">Input
+        for queue</inout_port>
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Action ID="AddToQueue">
+      <input_port name="queue_input"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">Input for queue</input_port>
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Action ID="AlwaysFailure" />
+    <Action ID="AlwaysSuccess" />
+    <Control ID="AsyncFallback" />
+    <Control ID="AsyncSequence" />
+    <Action ID="BoolOption">
+      <input_port name="option_name" type="std::string">Name of the boolean action option</input_port>
+      <input_port name="option_description" type="std::string">Description of the option</input_port>
+      <output_port name="bool_command" type="bool">Boolean Command Output</output_port>
+      <output_port name="bool_command_received" type="bool">Whether this boolean was received</output_port>
+      <input_port name="option_input"
+        type="polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;" />
+      <inout_port name="options_vector"
+        type="std::vector&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;" />
+    </Action>
+    <Action ID="BoolPublisher">
+      <input_port name="bool" type="bool">Boolean input to publish</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="publisher_name" type="std::string" default="">publisher name</input_port>
+    </Action>
+    <Action ID="BoolSubscriber">
+      <output_port name="received_boolean" type="bool">boolean received from subscription</output_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="topic_name" type="std::string" default="">topic to subscribe to</input_port>
+    </Action>
+    <Action ID="ClearQueue">
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Action ID="CommandCortexFlowService">
+      <inout_port name="pause_requested" type="bool">Cortex Command(s) Received to Append</inout_port>
+      <inout_port name="resume_requested" type="bool">Cortex Command(s) Received to Append</inout_port>
+      <inout_port name="stop_requested" type="bool">Cortex Command(s) Received to Append</inout_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="CortexFeedbackPublisher">
+      <input_port name="status_message"
+        type="polymath_msgs::msg::CortexStatus_&lt;std::allocator&lt;void&gt; &gt;">Status Feedback</input_port>
+      <input_port name="navigation_feedback"
+        type="polymath_msgs::msg::NavigationFeedback_&lt;std::allocator&lt;void&gt; &gt;">Navigation
+        Feedback</input_port>
+      <input_port name="vehicle_feedback"
+        type="polymath_msgs::msg::VehicleFeedback_&lt;std::allocator&lt;void&gt; &gt;">Vehicle
+        Feedback</input_port>
+      <input_port name="active_command_index" type="unsigned int">Index of active command</input_port>
+      <input_port name="current_geopose"
+        type="geographic_msgs::msg::GeoPoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Current
+        Geopose</input_port>
+      <input_port name="number_of_commands" type="unsigned int">Number of queued commands</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="publisher_name" type="std::string" default="">publisher name</input_port>
+    </Action>
+    <Action ID="CortexToNavThruPoses">
+      <input_port name="reference_target_map"
+        type="std::unordered_map&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt;, std::hash&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::equal_to&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Unordered
+        map of TFs we publish(ed)</input_port>
+      <input_port name="target_frame" type="std::string" default="map">Target frame for nav2 to
+        travel to</input_port>
+      <input_port name="current_geopose"
+        type="geographic_msgs::msg::GeoPoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Current Geo
+        Pose</input_port>
+      <input_port name="current_pose"
+        type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">current pose in
+        utm or map</input_port>
+      <output_port name="nav2_goal"
+        type="nav2_msgs::action::NavigateThroughPoses_Goal_&lt;std::allocator&lt;void&gt; &gt;">Validated
+        Nav2 Goal Output</output_port>
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">Cortex Command
+        Input</input_port>
+    </Action>
+    <Decorator ID="Delay">
+      <input_port name="delay_msec" type="unsigned int">Tick the child after a few milliseconds</input_port>
+    </Decorator>
+    <Control ID="Fallback" />
+    <Decorator ID="ForceFailure" />
+    <Decorator ID="ForceSuccess" />
+    <Action ID="GetFrontOfQueue">
+      <output_port name="front_of_queue"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">front_of_queue</output_port>
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Action ID="GetNavPathOption">
+      <output_port name="nav_path_option"
+        type="polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;">navigation path option
+        in cortex command</output_port>
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">cortex command
+        containing nav2 command</input_port>
+    </Action>
+    <Action ID="GetVehicleCommandOption">
+      <output_port name="vehicle_command_option"
+        type="polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;">vehicle command option
+        in cortex command</output_port>
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">cortex command
+        containing vehicle command</input_port>
+    </Action>
+    <Condition ID="GoalUpdated">
+      <inout_port name="previous_goal"
+        type="nav2_msgs::action::NavigateThroughPoses_Goal_&lt;std::allocator&lt;void&gt; &gt;">previous_nav2
+        through poses goal</inout_port>
+      <input_port name="goal"
+        type="nav2_msgs::action::NavigateThroughPoses_Goal_&lt;std::allocator&lt;void&gt; &gt;">nav2
+        through poses goal</input_port>
+    </Condition>
+    <Control ID="IfThenElse" />
+    <Action ID="InitializePoseTransformer">
+      <input_port name="geopose_stamped"
+        type="geographic_msgs::msg::GeoPoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Cortex Goal
+        Input</input_port>
+    </Action>
+    <Decorator ID="Inverter" />
+    <Condition ID="IsCortexCommandFlow">
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">Cortex Goal
+        Input</input_port>
+    </Condition>
+    <Condition ID="IsCortexCommandNav2">
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">Cortex Goal
+        Input</input_port>
+    </Condition>
+    <Condition ID="IsCortexCommandVehicle">
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">Cortex Command
+        Input</input_port>
+    </Condition>
+    <Condition ID="IsQueueEmpty">
+      <output_port name="size_of_queue" type="unsigned int">size of queue</output_port>
+      <input_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">queue
+        to check</input_port>
+    </Condition>
+    <Condition ID="IsTrue">
+      <input_port name="boolean" type="bool">Boolean to decide success or failure off of</input_port>
+    </Condition>
+    <Decorator ID="KeepRunningUntilFailure" />
+    <Action ID="ListReferenceTargetsService">
+      <input_port name="reference_target_map"
+        type="std::unordered_map&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt;, std::hash&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::equal_to&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Reference
+        targets that cortex has stored and their information</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Decorator ID="LoopBool">
+      <output_port name="value" type="bool" />
+      <input_port name="if_empty" type="BT::NodeStatus" default="SUCCESS">Status to return if queue
+        is empty: SUCCESS, FAILURE, SKIPPED</input_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;bool, std::allocator&lt;bool&gt; &gt; &gt;" />
+    </Decorator>
+    <Decorator ID="LoopDouble">
+      <output_port name="value" type="double" />
+      <input_port name="if_empty" type="BT::NodeStatus" default="SUCCESS">Status to return if queue
+        is empty: SUCCESS, FAILURE, SKIPPED</input_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;double, std::allocator&lt;double&gt; &gt; &gt;" />
+    </Decorator>
+    <Decorator ID="LoopInt">
+      <output_port name="value" type="int" />
+      <input_port name="if_empty" type="BT::NodeStatus" default="SUCCESS">Status to return if queue
+        is empty: SUCCESS, FAILURE, SKIPPED</input_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;int, std::allocator&lt;int&gt; &gt; &gt;" />
+    </Decorator>
+    <Decorator ID="LoopString">
+      <output_port name="value" type="std::string" />
+      <input_port name="if_empty" type="BT::NodeStatus" default="SUCCESS">Status to return if queue
+        is empty: SUCCESS, FAILURE, SKIPPED</input_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; &gt;" />
+    </Decorator>
+    <Action ID="MetricsPublisher">
+      <input_port name="navigation_feedback"
+        type="polymath_msgs::msg::NavigationFeedback_&lt;std::allocator&lt;void&gt; &gt;">Navigation
+        Feedback</input_port>
+      <input_port name="status_message"
+        type="polymath_msgs::msg::CortexStatus_&lt;std::allocator&lt;void&gt; &gt;">Cortex Status</input_port>
+    </Action>
+    <Action ID="ModifyCortexQueueService">
+      <input_port name="vehicle_command_options_vector"
+        type="std::vector&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">List
+        of available vehicle command options</input_port>
+      <output_port name="preempt_requested" type="bool">Preemption Is Requested</output_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <output_port name="commands_received"
+        type="std::vector&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">Cortex
+        Command(s) Received to Append</output_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="Nav2GoalCommander">
+      <input_port name="goal"
+        type="nav2_msgs::action::NavigateThroughPoses_Goal_&lt;std::allocator&lt;void&gt; &gt;">nav2
+        through poses goal</input_port>
+      <output_port name="cortex_status"
+        type="polymath_msgs::msg::CortexStatus_&lt;std::allocator&lt;void&gt; &gt;">cortex status
+        setting</output_port>
+      <input_port name="cancel_goal_on_halt" type="bool" default="true">bool to action server goal
+        on halt</input_port>
+      <input_port name="existence_timeout" type="float" default="2.000000">timeout in seconds</input_port>
+      <output_port name="navigation_feedback"
+        type="polymath_msgs::msg::NavigationFeedback_&lt;std::allocator&lt;void&gt; &gt;">cortex
+        navigation feedback</output_port>
+      <input_port name="response_timeout" type="float" default="30.000000">timeout in seconds</input_port>
+      <input_port name="action_name" type="std::string" default="">action name</input_port>
+    </Action>
+    <Action ID="Nav2GoalPosePublisher">
+      <input_port name="nav2_goal"
+        type="nav2_msgs::action::NavigateThroughPoses_Goal_&lt;std::allocator&lt;void&gt; &gt;">Validated
+        Nav2 Goal Output</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="publisher_name" type="std::string" default="">publisher name</input_port>
+    </Action>
+    <Action ID="NavSatFixSubscriber">
+      <output_port name="geopose_stamped"
+        type="geographic_msgs::msg::GeoPoseStamped_&lt;std::allocator&lt;void&gt; &gt;">output
+        geopose stamped</output_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="topic_name" type="std::string" default="">topic to subscribe to</input_port>
+    </Action>
+    <Control ID="Parallel">
+      <input_port name="failure_count" type="int" default="1">number of children that need to fail
+        to trigger a FAILURE</input_port>
+      <input_port name="success_count" type="int" default="-1">number of children that need to
+        succeed to trigger a SUCCESS</input_port>
+    </Control>
+    <Control ID="ParallelAll">
+      <input_port name="max_failures" type="int" default="1">If the number of children returning
+        FAILURE exceeds this value, ParallelAll returns FAILURE</input_port>
+    </Control>
+    <Action ID="PathLogicOptionsService">
+      <input_port name="path_logic_options"
+        type="std::vector&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">path
+        logic options for cortex to publish to users</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="PopBackQueue">
+      <output_port name="back_of_queue"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">back of queue</output_port>
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Action ID="PopFrontQueue">
+      <output_port name="front_of_queue"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">front of queue</output_port>
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Decorator ID="Precondition">
+      <input_port name="else" type="BT::NodeStatus" default="FAILURE">Return status if condition is
+        false</input_port>
+      <input_port name="if" type="std::string" />
+    </Decorator>
+    <Action ID="ProcessFlowCommand">
+      <output_port name="pause_requested" type="bool">Pause Requested</output_port>
+      <output_port name="resume_requested" type="bool">Resume Requested</output_port>
+      <output_port name="stop_requested" type="bool">Stop Requested</output_port>
+      <input_port name="cortex_command"
+        type="polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;">Cortex Command
+        Input</input_port>
+    </Action>
+    <Control ID="ReactiveFallback" />
+    <Control ID="ReactiveSequence" />
+    <Action ID="ReferenceTargetOdomPublisher">
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="target_parent_frame" type="std::string" default="map">Frame for parent of TF
+        to be at</input_port>
+      <input_port name="reference_target_map"
+        type="std::unordered_map&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt;, std::hash&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::equal_to&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Unordered
+        map of TFs we publish(ed)</input_port>
+    </Action>
+    <Action ID="ReferenceTargetSubscriber">
+      <inout_port name="reference_targets"
+        type="std::vector&lt;polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">list
+        of cortex reference targets</inout_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="topic_name" type="std::string" default="">topic to subscribe to</input_port>
+    </Action>
+    <Decorator ID="Repeat">
+      <input_port name="num_cycles" type="int">Repeat a successful child up to N times. Use -1 to
+        create an infinite loop.</input_port>
+    </Decorator>
+    <Decorator ID="RetryUntilSuccessful">
+      <input_port name="num_attempts" type="int">Execute again a failing child up to N times. Use -1
+        to create an infinite loop.</input_port>
+    </Decorator>
+    <Decorator ID="RunOnce">
+      <input_port name="then_skip" type="bool" default="true">If true, skip after the first
+        execution, otherwise return the same NodeStatus returned once bu the child.</input_port>
+    </Decorator>
+    <Action ID="SaveQueue">
+      <output_port name="stored_queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">back
+        of queue</output_port>
+      <output_port name="size_of_queue" type="unsigned int">size of queue post tick</output_port>
+      <inout_port name="queue"
+        type="std::shared_ptr&lt;std::deque&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::CortexCommand_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Input
+        queue for us to utilize</inout_port>
+    </Action>
+    <Action ID="Script">
+      <input_port name="code" type="std::string">Piece of code that can be parsed</input_port>
+    </Action>
+    <Condition ID="ScriptCondition">
+      <input_port name="code" type="BT::AnyTypeAllowed">Piece of code that can be parsed. Must
+        return false or true</input_port>
+    </Condition>
+    <Control ID="Sequence" />
+    <Control ID="SequenceWithMemory" />
+    <Action ID="SetBlackboard">
+      <inout_port name="output_key" type="BT::AnyTypeAllowed">Name of the blackboard entry where the
+        value should be written</inout_port>
+      <input_port name="value" type="BT::AnyTypeAllowed">Value to be written int othe output_key</input_port>
+    </Action>
+    <Action ID="SetBool">
+      <output_port name="output" type="bool">boolean to set</output_port>
+      <input_port name="value" type="bool" default="false">value to set</input_port>
+    </Action>
+    <Action ID="SetBoolClient">
+      <input_port name="bool" type="bool">Boolean input to set in the service call</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="response_timeout" type="float" default="30.000000">timeout in seconds</input_port>
+      <input_port name="existence_timeout" type="float" default="2.000000">timeout in seconds</input_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="SetCortexStatus">
+      <output_port name="status_output"
+        type="polymath_msgs::msg::CortexStatus_&lt;std::allocator&lt;void&gt; &gt;">cortex status to
+        set</output_port>
+      <input_port name="status_message" type="std::string" default="">status message string</input_port>
+      <input_port name="status_input" type="std::string" default="STOPPED">status enum string</input_port>
+    </Action>
+    <Decorator ID="SkipUnlessUpdated">
+      <input_port name="entry" type="BT::Any">Entry to check</input_port>
+    </Decorator>
+    <Action ID="Sleep">
+      <input_port name="msec" type="unsigned int" />
+    </Action>
+    <SubTree ID="SubTree">
+      <input_port name="_autoremap" type="bool" default="false">If true, all the ports with the same
+        name will be remapped</input_port>
+    </SubTree>
+    <Control ID="Switch2">
+      <input_port name="case_2" type="std::string" />
+      <input_port name="case_1" type="std::string" />
+      <input_port name="variable" type="std::string" />
+    </Control>
+    <Control ID="Switch3">
+      <input_port name="case_3" type="std::string" />
+      <input_port name="case_2" type="std::string" />
+      <input_port name="case_1" type="std::string" />
+      <input_port name="variable" type="std::string" />
+    </Control>
+    <Control ID="Switch4">
+      <input_port name="case_4" type="std::string" />
+      <input_port name="case_3" type="std::string" />
+      <input_port name="case_2" type="std::string" />
+      <input_port name="case_1" type="std::string" />
+      <input_port name="variable" type="std::string" />
+    </Control>
+    <Control ID="Switch5">
+      <input_port name="case_5" type="std::string" />
+      <input_port name="case_4" type="std::string" />
+      <input_port name="case_3" type="std::string" />
+      <input_port name="case_2" type="std::string" />
+      <input_port name="case_1" type="std::string" />
+      <input_port name="variable" type="std::string" />
+    </Control>
+    <Control ID="Switch6">
+      <input_port name="case_5" type="std::string" />
+      <input_port name="case_4" type="std::string" />
+      <input_port name="case_6" type="std::string" />
+      <input_port name="case_3" type="std::string" />
+      <input_port name="case_2" type="std::string" />
+      <input_port name="case_1" type="std::string" />
+      <input_port name="variable" type="std::string" />
+    </Control>
+    <Action ID="TfReferenceBroadcaster">
+      <inout_port name="reference_targets"
+        type="std::vector&lt;polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">Reference
+        Targets to Transmit</inout_port>
+      <output_port name="reference_target_map"
+        type="std::unordered_map&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt;, std::hash&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::equal_to&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;, std::allocator&lt;std::pair&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const, polymath_msgs::msg::ReferenceTarget_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt; &gt;">Unordered
+        map of TFs we publish(ed)</output_port>
+      <input_port name="tf_target_parent_frame" type="std::string" default="map">Frame for parent of
+        TF to be at</input_port>
+    </Action>
+    <Action ID="TfToCurrentPose">
+      <output_port name="current_map_pose"
+        type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Current map Pose</output_port>
+      <output_port name="current_geopose"
+        type="geographic_msgs::msg::GeoPoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Current Geo
+        Pose</output_port>
+    </Action>
+    <Decorator ID="Timeout">
+      <input_port name="msec" type="unsigned int">After a certain amount of time, halt() the child
+        if it is still running.</input_port>
+    </Decorator>
+    <Action ID="TriggerClient">
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="response_timeout" type="float" default="30.000000">timeout in seconds</input_port>
+      <input_port name="existence_timeout" type="float" default="2.000000">timeout in seconds</input_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="TriggerService">
+      <output_port name="trigger_received" type="bool">whether a trigger event was received</output_port>
+      <output_port name="number_of_triggers_received" type="unsigned int">output the number of
+        triggers we have received</output_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="UnsetBlackboard">
+      <input_port name="key" type="std::string">Key of the entry to remove</input_port>
+    </Action>
+    <Action ID="VehicleCommandOptionsService">
+      <input_port name="vehicle_command_options"
+        type="std::vector&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;polymath_msgs::msg::Option_&lt;std::allocator&lt;void&gt; &gt; &gt; &gt;">vehicle
+        command options for cortex to publish to users</input_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="service_name" type="std::string" default="">service name</input_port>
+    </Action>
+    <Action ID="VehicleFeedbackSubscriber">
+      <output_port name="vehicle_feedback"
+        type="polymath_msgs::msg::VehicleFeedback_&lt;std::allocator&lt;void&gt; &gt;">output
+        vehicle feedback</output_port>
+      <inout_port name="callback_group" type="std::shared_ptr&lt;rclcpp::CallbackGroup&gt;">callback
+        group to use</inout_port>
+      <input_port name="topic_name" type="std::string" default="">topic to subscribe to</input_port>
+    </Action>
+    <Decorator ID="WaitValueUpdate">
+      <input_port name="entry" type="BT::Any">Entry to check</input_port>
+    </Decorator>
+    <Action ID="WasEntryUpdated">
+      <input_port name="entry" type="BT::Any">Entry to check</input_port>
+    </Action>
+    <Control ID="WhileDoElse" />
+  </TreeNodesModel>
+</root>
