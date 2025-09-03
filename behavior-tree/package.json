@@ -17,6 +17,8 @@
     "local-install": "foxglove-extension install",
     "package": "foxglove-extension package",
     "pretest": "foxglove-extension pretest",
+    "vitest": "vitest run",
+    "vitest:watch": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -39,6 +41,10 @@
     "react-dom": "18.3.1",
     "storybook": "^7.6.20",
     "tailwindcss": "^4.1.12",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.2.5"
   }
 }

@@ -24,7 +24,7 @@ export function BehaviorTree({ xml }: BehaviorTreeProps): ReactElement {
 
   return (
     <div className="p-10">
-      <pre className="font-mono text-lg whitespace-pre-wrap break-words bg-gray-50 p-3 rounded border bg-red-100">
+      <pre className="font-mono text-lg whitespace-pre-wrap break-words bg-gray-50 p-3 rounded border">
         {xml}
       </pre>
     </div>
