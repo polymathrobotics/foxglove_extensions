@@ -19,6 +19,16 @@ const config = {
     if (forkTsCheckerIndex !== -1) {
       config.plugins.splice(forkTsCheckerIndex, 1);
     }
+    // Filter out the existing css rule so css-loader isn't included twice
+    config.module.rules = config.module.rules.filter(
+      (rule) => !(rule.test && String(rule.test) === String(/\.css$/))
+    );
+    config.module.rules.push(
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+    )
     return config;
   },
   "typescript": {
