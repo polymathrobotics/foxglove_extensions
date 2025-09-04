@@ -31,6 +31,14 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
   const [panelState, setPanelState] = useState<PanelState>(() => {
     return (context.initialState as PanelState | undefined) ?? {};
   });
+
+
+  // const [behaviorTreeXmlTopic, setBehaviorTreeXmlTopic] = useState<string | undefined>(
+  // panelState.behaviorTreeXmlTopic,
+  // );
+  // const [behaviorTreeLogsTopic, setBehaviorTreeLogsTopic] = useState<string | undefined>(
+  // panelState.behaviorTreeLogsTopic,
+  // );
   const [behaviorTreeXml, setBehaviorTreeXml] = useState<string | undefined>();
   const [behaviorTreeLogs, setBehaviorTreeLogs] = useState<BehaviorTreeLog | undefined>();
 
@@ -56,6 +64,16 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
 
   // We use a layout effect to setup render handling for our panel. We also setup some topic subscriptions.
   useLayoutEffect(() => {
+    // After adding a render handler, you must indicate which fields from RenderState will trigger updates.
+    // If you do not watch any fields then your panel will never render since the panel context will assume you do not want any updates.
+
+    // tell the panel context that we care about any update to the _topic_ field of RenderState
+    context.watch("topics");
+
+    // tell the panel context we want messages for the current frame for topics we've subscribed to
+    // This corresponds to the _currentFrame_ field of render state.
+    context.watch("currentFrame");
+
     // The render handler is run by the broader Foxglove system during playback when your panel
     // needs to render because the fields it is watching have changed. How you handle rendering depends on your framework.
     // You can only setup one render handler - usually early on in setting up your panel.
@@ -79,12 +97,25 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
         const messages = renderState.currentFrame.filter(
           (msg) => msg.topic === panelState.behaviorTreeXmlTopic,
         );
-        const latestMessage = messages[messages.length - 1]; // Get the latest message
 
-        if (latestMessage) {
-          const messageData = latestMessage.message as { data?: string };
-          if (messageData.data) {
-            setBehaviorTreeXml(messageData.data);
+        if (messages.length > 0) {
+          const latestMessage = messages[messages.length - 1];
+
+          if (latestMessage?.message) {
+            let xmlData: string | undefined;
+
+            if (typeof latestMessage.message === "string") {
+              xmlData = latestMessage.message;
+            } else if (
+              typeof latestMessage.message === "object" &&
+              "data" in latestMessage.message
+            ) {
+              xmlData = (latestMessage.message as { data?: string }).data;
+            }
+
+            if (xmlData && typeof xmlData === "string") {
+              setBehaviorTreeXml(xmlData);
+            }
           }
         }
       }
@@ -93,47 +124,62 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
         const messages = renderState.currentFrame.filter(
           (msg) => msg.topic === panelState.behaviorTreeLogsTopic,
         );
-        const latestMessage = messages[messages.length - 1]; // Get the latest message
 
-        if (latestMessage) {
-          const messageData = latestMessage.message as { data?: BehaviorTreeLog };
-          if (messageData.data) {
-            setBehaviorTreeLogs(messageData.data);
+        if (messages.length > 0) {
+          const latestMessage = messages[messages.length - 1];
+
+          if (latestMessage?.message) {
+            let logData: BehaviorTreeLog | undefined;
+
+            if (typeof latestMessage.message === "object") {
+              if ("data" in latestMessage.message) {
+                logData = (latestMessage.message as { data?: BehaviorTreeLog }).data;
+              } else {
+                logData = latestMessage.message as BehaviorTreeLog;
+              }
+            }
+
+            if (logData) {
+              setBehaviorTreeLogs(logData);
+            }
           }
         }
       }
     };
+  }, [context, panelState]);
 
-    // After adding a render handler, you must indicate which fields from RenderState will trigger updates.
-    // If you do not watch any fields then your panel will never render since the panel context will assume you do not want any updates.
+  // Handle topic subscriptions in a separate effect that runs when topics change
+  useEffect(() => {
+    const subscriptions = [];
 
-    // tell the panel context that we care about any update to the _topic_ field of RenderState
-    context.watch("topics");
-
-    // tell the panel context we want messages for the current frame for topics we've subscribed to
-    // This corresponds to the _currentFrame_ field of render state.
-    context.watch("currentFrame");
-
-    // Subscribe to the selected topic
     if (panelState.behaviorTreeXmlTopic) {
-      context.subscribe([{ topic: panelState.behaviorTreeXmlTopic }]);
+      subscriptions.push({ topic: panelState.behaviorTreeXmlTopic });
     }
 
     if (panelState.behaviorTreeLogsTopic) {
-      context.subscribe([{ topic: panelState.behaviorTreeLogsTopic }]);
+      subscriptions.push({ topic: panelState.behaviorTreeLogsTopic });
+    }
+
+    if (subscriptions.length > 0) {
+      context.subscribe(subscriptions);
+    } else {
+      // Subscribe to empty array to clear previous subscriptions
+      context.subscribe([]);
     }
   }, [context, panelState.behaviorTreeXmlTopic, panelState.behaviorTreeLogsTopic]);
 
   // Setup panel settings
   useEffect(() => {
     const actionHandler = (action: SettingsTreeAction) => {
-      if (
-        action.action === "update" &&
-        action.payload.path[0] === "behaviorTreeXmlTopic" &&
-        action.payload.path[1] === "topic"
-      ) {
+
+      const path = action.payload.path.join(".");
+      if (action.action === "update" && path === "behaviorTreeTopics.behaviorTreeXmlTopic") {
         const newTopic = action.payload.value as string;
         setPanelState((prev) => ({ ...prev, behaviorTreeXmlTopic: newTopic }));
+      }
+      if (action.action === "update" && path === "behaviorTreeTopics.behaviorTreeLogsTopic") {
+        const newTopic = action.payload.value as string;
+        setPanelState((prev) => ({ ...prev, behaviorTreeLogsTopic: newTopic }));
       }
     };
 

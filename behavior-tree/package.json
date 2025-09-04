@@ -4,7 +4,7 @@
   "description": "Visualization and information on Behavior Trees",
   "publisher": "Polymath Robotics",
   "homepage": "",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "UNLICENSED",
   "main": "./dist/extension.js",
   "keywords": [],
