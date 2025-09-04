@@ -1,0 +1,27 @@
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Sequence name="root_sequence" _uid="1">
+      <CheckBattery name="battery_check" _uid="2"/>
+      <Fallback name="navigation_fallback" _uid="3">
+        <NavigateToTarget name="navigate_primary" target="home" _uid="4"/>
+        <NavigateToTarget name="navigate_backup" target="safe_zone" _uid="5"/>
+      </Fallback>
+      <Action name="report_status" message="Task completed" _uid="6"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <TreeNodesModel>
+    <Condition ID="CheckBattery">
+      <input_port name="min_voltage" type="double" default="11.0">Minimum acceptable voltage</input_port>
+      <output_port name="current_voltage" type="double">Current battery voltage</output_port>
+    </Condition>
+    <Action ID="NavigateToTarget">
+      <input_port name="target" type="std::string">Target location name</input_port>
+      <input_port name="timeout" type="int" default="30">Navigation timeout in seconds</input_port>
+      <output_port name="error_code" type="int">Error code if navigation fails</output_port>
+    </Action>
+    <Action ID="Action">
+      <input_port name="message" type="std::string">Message to report</input_port>
+    </Action>
+  </TreeNodesModel>
+</root>
