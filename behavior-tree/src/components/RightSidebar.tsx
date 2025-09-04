@@ -258,8 +258,6 @@ export function RightSidebar({
     };
   }, [isResizing]);
 
-  console.log(behaviorTree?.models);
-
   return (
     <div className="h-full relative">
       {/* Toggle button - always visible */}
