@@ -2,7 +2,7 @@
 
 ![Behavior Tree](./docs/behavior_tree_first_pass.gif)
 
-This panel visualizes behavior trees running against BehaviorTree.CPP. For now it just visualizes the representation of the tree, but we also want to build out functionality to support live visualization of state of the behavior tree.
+This panel visualizes behavior trees running against BehaviorTree.CPP. For now it just visualizes the representation of the tree, but we also want to build out functionality to support live visualization of state of the behavior tree through the topic datatype `nav2_msgs/msg/BehaviorTreeLog`.
 
 ## How to Use
 
