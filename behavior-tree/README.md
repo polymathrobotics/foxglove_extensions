@@ -1,39 +1,14 @@
-# behavior-tree
+# Behavior Tree Panel
 
-[Foxglove](https://foxglove.dev) allows developers to create [extensions](https://docs.foxglove.dev/docs/visualization/extensions/introduction), or custom code that is loaded and executed inside the Foxglove application. This can be used to add custom panels. Extensions are authored in TypeScript using the `@foxglove/extension` SDK.
+![Behavior Tree](./docs/behavior_tree_first_pass.gif)
 
-## Develop
+This panel visualizes behavior trees running against BehaviorTree.CPP. For now it just visualizes the representation of the tree, but we also want to build out functionality to support live visualization of state of the behavior tree.
 
-Extension development uses the `npm` package manager to install development dependencies and run build scripts.
+## How to Use
 
-To install extension dependencies, run `npm` from the root of the extension package.
+In order to visualize your behavior tree, you'll need to publish a topic of type `std_msgs/msg/String` that is an XML string of your tree. Example:
 
-```sh
-npm install
+```cpp
+std_msgs::msg::String bt_xml_msg;
+bt_xml_msg.data = BT::WriteTreeToXML(tree_, true, true);
 ```
-
-To build and install the extension into your local Foxglove desktop app, run:
-
-```sh
-npm run local-install
-```
-
-Open the Foxglove desktop (or `ctrl-R` to refresh if it is already open). Your extension is installed and available within the app.
-
-## Package
-
-Extensions are packaged into `.foxe` files. These files contain the metadata (package.json) and the build code for the extension.
-
-Before packaging, make sure to set `name`, `publisher`, `version`, and `description` fields in _package.json_. When ready to distribute the extension, run:
-
-```sh
-npm run package
-```
-
-This command will package the extension into a `.foxe` file in the local directory.
-
-## Publish
-
-You can publish the extension to the public registry or privately for your organization.
-
-See documentation here: https://docs.foxglove.dev/docs/visualization/extensions/publish/#packaging-your-extension
