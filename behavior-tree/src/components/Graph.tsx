@@ -26,12 +26,10 @@ import { X } from "lucide-react";
 import { ReactElement, useMemo, useCallback, useEffect, useRef } from "react";
 import "@xyflow/react/dist/style.css";
 
-import { generateDag } from "../dag";
-import type { DagNode } from "../dag";
-import type { NodeStatusName, NodeStatusSnapshot, TBehaviorTree } from "../types";
+import { generateDag, DagNode } from "../dag";
+import { NodeStatusName, NodeStatusSnapshot, TBehaviorTree } from "../types";
 import { ElementDetailsPopup } from "./ElementDetailsPopup";
-import { useGraphContext } from "./GraphContextProvider";
-import type { SelectedElement } from "./GraphContextProvider";
+import { useGraphContext, SelectedElement } from "./GraphContextProvider";
 import { getNodeColor, getNodeStatusColor } from "../utils/nodeStyles";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
@@ -57,12 +55,11 @@ function BehaviorTreeNode({ data }: { data: RuntimeDagNode }) {
   const nodeClassName = isSelected
     ? nodeColorScheme.nodeStyles.selected
     : nodeColorScheme.nodeStyles.default;
-  const uuid = data.attributes?.[UUID_KEY] ?? "UNKNOWN_UUID";
+  const uuid = data.attributes?.[UUID_KEY] || "UNKNOWN_UUID";
 
   return (
     <div
-      aria-label={`${data.name}: ${data.status ?? "status unknown"}`}
-      className={`relative px-3 ${data.status ? "py-1" : "py-2"} shadow-sm border-2 rounded-lg min-w-24 text-center transition-all duration-200 ${nodeClassName} ${
+      className={`px-3 py-2 shadow-sm border-2 rounded-lg min-w-24 text-center transition-all duration-200 ${nodeClassName} ${
         isSelected ? "transform scale-105" : "hover:shadow-md"
       } ${isMatched && !isSelected ? "opacity-100" : ""} ${matchedNodeIds.size > 0 && !isMatched ? "opacity-30" : ""}`}
       style={{
@@ -73,18 +70,13 @@ function BehaviorTreeNode({ data }: { data: RuntimeDagNode }) {
       <Handle type="target" position={Position.Top} className="w-2 h-2" />
 
       <div
-        className={`text-xs flex items-center justify-center ${data.status ? "mb-0" : "mb-1"} ${isSelected ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-200"}`}
+        className={`text-xs flex items-center justify-center mb-1 ${isSelected ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-200"}`}
       >
         <Badge className="mr-[8px]" style={{ backgroundColor: modelColorScheme.badgeColor }}>
           {uuid}
         </Badge>
         <span className="truncate">{data.name}</span>
       </div>
-      {data.status && (
-        <div className="text-[10px] leading-none font-bold tracking-wide text-gray-700 dark:text-gray-100">
-          {data.status}
-        </div>
-      )}
       <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
     </div>
   );

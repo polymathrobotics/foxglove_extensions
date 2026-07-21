@@ -23,7 +23,7 @@ import {
   extractBehaviorTreeXml,
 } from "./liveState";
 import "./styles/globals.css";
-import type { BehaviorTreeLog, NodeStatusSnapshot } from "./types";
+import { BehaviorTreeLog, NodeStatusSnapshot } from "./types";
 
 type PanelState = {
   behaviorTreeXmlTopic?: string;
@@ -37,13 +37,14 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
   const [panelState, setPanelState] = useState<PanelState>(() => {
     return (context.initialState as PanelState | undefined) ?? {};
   });
+
   const [behaviorTreeXml, setBehaviorTreeXml] = useState<string | undefined>(undefined);
   const [nodeStatuses, setNodeStatuses] = useState<NodeStatusSnapshot>(
     EMPTY_NODE_STATUS_SNAPSHOT,
   );
   const behaviorTreeXmlRef = useRef<string | undefined>(undefined);
 
-  const [renderDone, setRenderDone] = useState<(() => void) | undefined>(undefined);
+  const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
   const [topics, setTopics] = useState<Topic[]>([]);
 
   const validBehaviorTreeXmlTopics = useMemo(
@@ -62,26 +63,34 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     [topics],
   );
 
-  // A different XML topic represents a different tree source.
   useLayoutEffect(() => {
     behaviorTreeXmlRef.current = undefined;
     setBehaviorTreeXml(undefined);
   }, [panelState.behaviorTreeXmlTopic]);
 
-  // Topic changes invalidate node statuses accumulated from the old source.
   useLayoutEffect(() => {
     setNodeStatuses(EMPTY_NODE_STATUS_SNAPSHOT);
   }, [panelState.behaviorTreeXmlTopic, panelState.behaviorTreeLogsTopic]);
 
-  // We use a layout effect to set up render handling for the panel.
+  // We use a layout effect to setup render handling for our panel. We also setup some topic subscriptions.
   useLayoutEffect(() => {
-    // After adding a render handler, indicate which RenderState fields trigger updates.
+    // After adding a render handler, you must indicate which fields from RenderState will trigger updates.
+    // If you do not watch any fields then your panel will never render since the panel context will assume you do not want any updates.
+
+    // tell the panel context that we care about any update to the _topic_ field of RenderState
     context.watch("topics");
+
+    // tell the panel context we want messages for the current frame for topics we've subscribed to
+    // This corresponds to the _currentFrame_ field of render state.
     context.watch("currentFrame");
     context.watch("didSeek");
 
     context.onRender = (renderState, done) => {
-      // Foxglove waits for this callback before sending the next render frame.
+      // render functions receive a _done_ callback. You MUST call this callback to indicate your panel has finished rendering.
+      // Your panel will not receive another render callback until _done_ is called from a prior render. If your panel is not done
+      // rendering before the next render call, Foxglove shows a notification to the user that your panel is delayed.
+      //
+      // Set the done callback into a state variable to trigger a re-render.
       setRenderDone(() => done);
 
       if (renderState.topics != null) {
@@ -91,8 +100,6 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
       const logsToApply: BehaviorTreeLog[] = [];
       let shouldResetStatuses = renderState.didSeek === true;
 
-      // Process every message in frame order. A BehaviorTreeLog can itself contain
-      // multiple transitions, which applyBehaviorTreeLogs also processes in order.
       for (const messageEvent of renderState.currentFrame ?? []) {
         if (messageEvent.topic === panelState.behaviorTreeXmlTopic) {
           const xmlData = extractBehaviorTreeXml(messageEvent.message);
@@ -103,7 +110,6 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
 
             if (isReplacingLoadedTree) {
               shouldResetStatuses = true;
-              // Logs earlier in this frame belong to the tree being replaced.
               logsToApply.length = 0;
             }
           }
@@ -132,9 +138,9 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     };
   }, [context, panelState.behaviorTreeLogsTopic, panelState.behaviorTreeXmlTopic]);
 
-  // Keep subscriptions aligned with the two selected topics.
+  // Handle topic subscriptions in a separate effect that runs when topics change
   useEffect(() => {
-    const subscriptions: { topic: string }[] = [];
+    const subscriptions = [];
 
     if (panelState.behaviorTreeXmlTopic) {
       subscriptions.push({ topic: panelState.behaviorTreeXmlTopic });
@@ -144,12 +150,18 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
       subscriptions.push({ topic: panelState.behaviorTreeLogsTopic });
     }
 
-    context.subscribe(subscriptions);
+    if (subscriptions.length > 0) {
+      context.subscribe(subscriptions);
+    } else {
+      // Subscribe to empty array to clear previous subscriptions
+      context.subscribe([]);
+    }
   }, [context, panelState.behaviorTreeXmlTopic, panelState.behaviorTreeLogsTopic]);
 
-  // Set up panel settings.
+  // Setup panel settings
   useEffect(() => {
     const actionHandler = (action: SettingsTreeAction) => {
+
       const path = action.payload.path.join(".");
       if (action.action === "update" && path === "behaviorTreeTopics.behaviorTreeXmlTopic") {
         const newTopic = action.payload.value as string;
@@ -191,12 +203,12 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     validBehaviorTreeLogsTopics,
   ]);
 
-  // Save panel state.
+  // Save panel state
   useEffect(() => {
     context.saveState(panelState);
   }, [context, panelState]);
 
-  // Invoke the done callback once the React render is complete.
+  // invoke the done callback once the render is complete
   useEffect(() => {
     renderDone?.();
   }, [renderDone]);
@@ -213,7 +225,7 @@ export function initBehaviorTreePanel(context: PanelExtensionContext): () => voi
   const root = createRoot(context.panelElement);
   root.render(<BehaviorTreePanel context={context} />);
 
-  // Return a function to run when the panel is removed.
+  // Return a function to run when the panel is removed
   return () => {
     root.unmount();
   };

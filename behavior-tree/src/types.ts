@@ -91,14 +91,14 @@ export type BehaviorTreeLogEvent = {
   timestamp: Timestamp;
   node_name: string;
   uid: number;
-  previous_status: string;
-  current_status: string;
+  previous_status: keyof typeof NodeStatus | string;
+  current_status: keyof typeof NodeStatus | string;
 };
 
 // Complete behavior tree log message
 export type BehaviorTreeLog = {
   timestamp: Timestamp;
-  event_log: readonly BehaviorTreeLogEvent[];
+  event_log: BehaviorTreeLogEvent[];
 };
 
 export type NodeStatusSnapshot = {

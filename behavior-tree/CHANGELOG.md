@@ -1,6 +1,6 @@
 # behavior-tree version history
 
-## Unreleased
+## 0.0.1
 
 - Add live node-state visualization from `nav2_msgs/msg/BehaviorTreeLog`.
 - Match status events by BehaviorTree.CPP UID, with a unique-node-name fallback.
