@@ -16,16 +16,20 @@ import { ReactElement, useMemo } from "react";
 import { Graph } from "./components/Graph";
 import { GraphContextProvider } from "./components/GraphContextProvider";
 import { parseBehaviorTreeXML } from "./parse";
-import { BehaviorTreeLog, TBehaviorTree } from "./types";
+import { EMPTY_NODE_STATUS_SNAPSHOT } from "./liveState";
+import type { NodeStatusSnapshot, TBehaviorTree } from "./types";
 
 import { RightSidebar } from "@/components/RightSidebar";
 
 interface BehaviorTreeProps {
   xml?: string;
-  logs?: BehaviorTreeLog;
+  nodeStatuses?: NodeStatusSnapshot;
 }
 
-export function BehaviorTree({ xml }: BehaviorTreeProps): ReactElement {
+export function BehaviorTree({
+  xml,
+  nodeStatuses = EMPTY_NODE_STATUS_SNAPSHOT,
+}: BehaviorTreeProps): ReactElement {
   const behaviorTree: TBehaviorTree | null = useMemo(() => {
     if (xml) {
       try {
@@ -42,7 +46,7 @@ export function BehaviorTree({ xml }: BehaviorTreeProps): ReactElement {
     <GraphContextProvider>
       <div className="h-full w-full relative flex">
         <div className="flex-1 relative">
-          <Graph behaviorTree={behaviorTree} />
+          <Graph behaviorTree={behaviorTree} nodeStatuses={nodeStatuses} />
         </div>
 
         <RightSidebar behaviorTree={behaviorTree} xml={xml} />

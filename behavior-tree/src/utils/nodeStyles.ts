@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import type { NodeStatusName } from "../types";
 
 export interface NodeColorScheme {
   nodeStyles: {
@@ -76,4 +77,57 @@ export function getNodeColor(modelType: string): NodeColorScheme {
     popupStyle: "bg-green-100 border-green-300 dark:bg-green-900 dark:border-green-600",
     badgeColor: "lightgreen",
   };
+}
+
+/**
+ * Get color scheme for a behavior tree node based on its latest runtime status.
+ */
+export function getNodeStatusColor(status: NodeStatusName): NodeColorScheme {
+  switch (status) {
+    case "IDLE":
+      return {
+        nodeStyles: {
+          default: "bg-gray-100 border-gray-400 dark:bg-gray-800 dark:border-gray-500",
+          selected: "bg-gray-200 border-gray-600 dark:bg-gray-700 dark:border-gray-300 shadow-lg ring-2 ring-gray-400/50",
+        },
+        popupStyle: "bg-gray-100 border-gray-400 dark:bg-gray-800 dark:border-gray-500",
+        badgeColor: "#9ca3af",
+      };
+    case "RUNNING":
+      return {
+        nodeStyles: {
+          default: "bg-amber-100 border-amber-500 dark:bg-amber-900 dark:border-amber-400 shadow-md ring-2 ring-amber-400/40 motion-safe:animate-pulse",
+          selected: "bg-amber-200 border-amber-600 dark:bg-amber-800 dark:border-amber-300 shadow-lg ring-2 ring-amber-400/70 motion-safe:animate-pulse",
+        },
+        popupStyle: "bg-amber-100 border-amber-500 dark:bg-amber-900 dark:border-amber-400",
+        badgeColor: "#f59e0b",
+      };
+    case "SUCCESS":
+      return {
+        nodeStyles: {
+          default: "bg-emerald-100 border-emerald-500 dark:bg-emerald-900 dark:border-emerald-400",
+          selected: "bg-emerald-200 border-emerald-600 dark:bg-emerald-800 dark:border-emerald-300 shadow-lg ring-2 ring-emerald-400/60",
+        },
+        popupStyle: "bg-emerald-100 border-emerald-500 dark:bg-emerald-900 dark:border-emerald-400",
+        badgeColor: "#10b981",
+      };
+    case "FAILURE":
+      return {
+        nodeStyles: {
+          default: "bg-red-100 border-red-500 dark:bg-red-950 dark:border-red-400",
+          selected: "bg-red-200 border-red-600 dark:bg-red-900 dark:border-red-300 shadow-lg ring-2 ring-red-400/60",
+        },
+        popupStyle: "bg-red-100 border-red-500 dark:bg-red-950 dark:border-red-400",
+        badgeColor: "#ef4444",
+      };
+    case "SKIPPED":
+      return {
+        nodeStyles: {
+          default: "bg-slate-100 border-slate-400 dark:bg-slate-800 dark:border-slate-500",
+          selected: "bg-slate-200 border-slate-600 dark:bg-slate-700 dark:border-slate-300 shadow-lg ring-2 ring-slate-400/50",
+        },
+        popupStyle: "bg-slate-100 border-slate-400 dark:bg-slate-800 dark:border-slate-500",
+        badgeColor: "#64748b",
+      };
+  }
 }
