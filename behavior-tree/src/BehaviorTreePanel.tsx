@@ -38,13 +38,21 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     return (context.initialState as PanelState | undefined) ?? {};
   });
 
-  const [behaviorTreeXml, setBehaviorTreeXml] = useState<string | undefined>(undefined);
+
+  // const [behaviorTreeXmlTopic, setBehaviorTreeXmlTopic] = useState<string | undefined>(
+  // panelState.behaviorTreeXmlTopic,
+  // );
+  // const [behaviorTreeLogsTopic, setBehaviorTreeLogsTopic] = useState<string | undefined>(
+  // panelState.behaviorTreeLogsTopic,
+  // );
+  const [behaviorTreeXml, setBehaviorTreeXml] = useState<string | undefined>();
   const [nodeStatuses, setNodeStatuses] = useState<NodeStatusSnapshot>(
     EMPTY_NODE_STATUS_SNAPSHOT,
   );
   const behaviorTreeXmlRef = useRef<string | undefined>(undefined);
 
   const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
+
   const [topics, setTopics] = useState<Topic[]>([]);
 
   const validBehaviorTreeXmlTopics = useMemo(
@@ -85,6 +93,13 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     context.watch("currentFrame");
     context.watch("didSeek");
 
+    // The render handler is run by the broader Foxglove system during playback when your panel
+    // needs to render because the fields it is watching have changed. How you handle rendering depends on your framework.
+    // You can only setup one render handler - usually early on in setting up your panel.
+    //
+    // Without a render handler your panel will never receive updates.
+    //
+    // The render handler could be invoked as often as 60hz during playback if fields are changing often.
     context.onRender = (renderState, done) => {
       // render functions receive a _done_ callback. You MUST call this callback to indicate your panel has finished rendering.
       // Your panel will not receive another render callback until _done_ is called from a prior render. If your panel is not done
@@ -92,7 +107,6 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
       //
       // Set the done callback into a state variable to trigger a re-render.
       setRenderDone(() => done);
-
       if (renderState.topics != null) {
         setTopics(renderState.topics as Topic[]);
       }
@@ -131,10 +145,6 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
           ),
         );
       }
-    };
-
-    return () => {
-      context.onRender = undefined;
     };
   }, [context, panelState.behaviorTreeLogsTopic, panelState.behaviorTreeXmlTopic]);
 
