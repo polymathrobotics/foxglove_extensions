@@ -17,7 +17,7 @@ import { Graph } from "./components/Graph";
 import { GraphContextProvider } from "./components/GraphContextProvider";
 import { parseBehaviorTreeXML } from "./parse";
 import { EMPTY_NODE_STATUS_SNAPSHOT } from "./liveState";
-import type { NodeStatusSnapshot, TBehaviorTree } from "./types";
+import { NodeStatusSnapshot, TBehaviorTree } from "./types";
 
 import { RightSidebar } from "@/components/RightSidebar";
 

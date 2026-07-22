@@ -17,7 +17,6 @@ import {
   applyBehaviorTreeLogs,
   EMPTY_NODE_STATUS_SNAPSHOT,
   extractBehaviorTreeLog,
-  extractBehaviorTreeXml,
   normalizeNodeStatus,
 } from "./liveState";
 import type { BehaviorTreeLog, BehaviorTreeLogEvent } from "./types";
@@ -40,12 +39,6 @@ function makeLog(...event_log: BehaviorTreeLogEvent[]): BehaviorTreeLog {
 }
 
 describe("live behavior tree state", () => {
-  it("extracts XML from raw and std_msgs/String-shaped messages", () => {
-    expect(extractBehaviorTreeXml("<root />")).toBe("<root />");
-    expect(extractBehaviorTreeXml({ data: "<root />" })).toBe("<root />");
-    expect(extractBehaviorTreeXml({ data: 42 })).toBeUndefined();
-  });
-
   it("extracts raw and data-wrapped BehaviorTreeLog messages", () => {
     const log = makeLog(makeEvent());
     expect(extractBehaviorTreeLog(log)).toBe(log);

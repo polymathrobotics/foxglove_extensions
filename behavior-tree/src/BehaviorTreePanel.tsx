@@ -20,7 +20,6 @@ import {
   applyBehaviorTreeLogs,
   EMPTY_NODE_STATUS_SNAPSHOT,
   extractBehaviorTreeLog,
-  extractBehaviorTreeXml,
 } from "./liveState";
 import "./styles/globals.css";
 import { BehaviorTreeLog, NodeStatusSnapshot } from "./types";
@@ -111,26 +110,50 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
         setTopics(renderState.topics as Topic[]);
       }
 
-      const logsToApply: BehaviorTreeLog[] = [];
+      // Clear accumulated live state when Foxglove seeks to a different time.
       let shouldResetStatuses = renderState.didSeek === true;
 
-      for (const messageEvent of renderState.currentFrame ?? []) {
-        if (messageEvent.topic === panelState.behaviorTreeXmlTopic) {
-          const xmlData = extractBehaviorTreeXml(messageEvent.message);
-          if (xmlData !== undefined && xmlData !== behaviorTreeXmlRef.current) {
-            const isReplacingLoadedTree = behaviorTreeXmlRef.current !== undefined;
-            behaviorTreeXmlRef.current = xmlData;
-            setBehaviorTreeXml(xmlData);
+      // Process messages from the subscribed topic
+      if (panelState.behaviorTreeXmlTopic && renderState.currentFrame) {
+        const messages = renderState.currentFrame.filter(
+          (msg) => msg.topic === panelState.behaviorTreeXmlTopic,
+        );
 
-            if (isReplacingLoadedTree) {
-              shouldResetStatuses = true;
-              logsToApply.length = 0;
+        if (messages.length > 0) {
+          const latestMessage = messages[messages.length - 1];
+
+          if (latestMessage?.message) {
+            let xmlData: string | undefined;
+
+            if (typeof latestMessage.message === "string") {
+              xmlData = latestMessage.message;
+            } else if (
+              typeof latestMessage.message === "object" &&
+              "data" in latestMessage.message
+            ) {
+              xmlData = (latestMessage.message as { data?: string }).data;
+            }
+
+            if (xmlData && typeof xmlData === "string" && xmlData !== behaviorTreeXmlRef.current) {
+              // A different tree replaced the loaded one: clear stale live state.
+              if (behaviorTreeXmlRef.current !== undefined) {
+                shouldResetStatuses = true;
+              }
+              behaviorTreeXmlRef.current = xmlData;
+              setBehaviorTreeXml(xmlData);
             }
           }
         }
+      }
 
-        if (messageEvent.topic === panelState.behaviorTreeLogsTopic) {
-          const logData = extractBehaviorTreeLog(messageEvent.message);
+      const logsToApply: BehaviorTreeLog[] = [];
+      if (panelState.behaviorTreeLogsTopic && renderState.currentFrame) {
+        const messages = renderState.currentFrame.filter(
+          (msg) => msg.topic === panelState.behaviorTreeLogsTopic,
+        );
+
+        for (const message of messages) {
+          const logData = extractBehaviorTreeLog(message.message);
           if (logData) {
             logsToApply.push(logData);
           }
@@ -146,7 +169,7 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
         );
       }
     };
-  }, [context, panelState.behaviorTreeLogsTopic, panelState.behaviorTreeXmlTopic]);
+  }, [context, panelState]);
 
   // Handle topic subscriptions in a separate effect that runs when topics change
   useEffect(() => {

@@ -26,12 +26,10 @@ import { X } from "lucide-react";
 import { ReactElement, useMemo, useCallback, useEffect, useRef } from "react";
 import "@xyflow/react/dist/style.css";
 
-import { generateDag } from "../dag";
-import type { DagNode } from "../dag";
-import type { NodeStatusName, NodeStatusSnapshot, TBehaviorTree } from "../types";
+import { generateDag, DagNode } from "../dag";
+import { NodeStatusName, NodeStatusSnapshot, TBehaviorTree } from "../types";
 import { ElementDetailsPopup } from "./ElementDetailsPopup";
-import { useGraphContext } from "./GraphContextProvider";
-import type { SelectedElement } from "./GraphContextProvider";
+import { useGraphContext, SelectedElement } from "./GraphContextProvider";
 import { getNodeColor, getNodeStatusColor } from "../utils/nodeStyles";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
@@ -57,7 +55,7 @@ function BehaviorTreeNode({ data }: { data: RuntimeDagNode }) {
   const nodeClassName = isSelected
     ? nodeColorScheme.nodeStyles.selected
     : nodeColorScheme.nodeStyles.default;
-  const uuid = data.attributes?.[UUID_KEY] ?? "UNKNOWN_UUID";
+  const uuid = data.attributes?.[UUID_KEY] || "UNKNOWN_UUID";
 
   return (
     <div

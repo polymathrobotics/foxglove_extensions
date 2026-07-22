@@ -25,18 +25,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value != null;
 }
 
-export function extractBehaviorTreeXml(message: unknown): string | undefined {
-  if (typeof message === "string") {
-    return message;
-  }
-
-  if (isRecord(message) && typeof message.data === "string") {
-    return message.data;
-  }
-
-  return undefined;
-}
-
 export function extractBehaviorTreeLog(message: unknown): BehaviorTreeLog | undefined {
   let candidate = message;
 
