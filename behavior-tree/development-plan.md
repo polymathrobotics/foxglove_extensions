@@ -7,7 +7,6 @@
 5. Add a tailwindcss setup.
 6. Now lets build an XML / behavior tree parser that is pure Typescript (no react). First
 
-
 ## Features
 
 - Should render a graph structure
