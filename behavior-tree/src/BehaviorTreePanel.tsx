@@ -12,12 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { PanelExtensionContext, SettingsTreeAction, Topic } from "@foxglove/extension";
-import { ReactElement, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { ReactElement, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import { BehaviorTree } from "./BehaviorTree";
+import {
+  applyBehaviorTreeLogs,
+  EMPTY_NODE_STATUS_SNAPSHOT,
+  extractBehaviorTreeLog,
+} from "./liveState";
 import "./styles/globals.css";
-import { BehaviorTreeLog } from "./types";
+import { BehaviorTreeLog, NodeStatusSnapshot } from "./types";
 
 type PanelState = {
   behaviorTreeXmlTopic?: string;
@@ -40,7 +45,10 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
   // panelState.behaviorTreeLogsTopic,
   // );
   const [behaviorTreeXml, setBehaviorTreeXml] = useState<string | undefined>();
-  const [behaviorTreeLogs, setBehaviorTreeLogs] = useState<BehaviorTreeLog | undefined>();
+  const [nodeStatuses, setNodeStatuses] = useState<NodeStatusSnapshot>(
+    EMPTY_NODE_STATUS_SNAPSHOT,
+  );
+  const behaviorTreeXmlRef = useRef<string | undefined>(undefined);
 
   const [renderDone, setRenderDone] = useState<(() => void) | undefined>();
 
@@ -62,6 +70,15 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     [topics],
   );
 
+  useLayoutEffect(() => {
+    behaviorTreeXmlRef.current = undefined;
+    setBehaviorTreeXml(undefined);
+  }, [panelState.behaviorTreeXmlTopic]);
+
+  useLayoutEffect(() => {
+    setNodeStatuses(EMPTY_NODE_STATUS_SNAPSHOT);
+  }, [panelState.behaviorTreeXmlTopic, panelState.behaviorTreeLogsTopic]);
+
   // We use a layout effect to setup render handling for our panel. We also setup some topic subscriptions.
   useLayoutEffect(() => {
     // After adding a render handler, you must indicate which fields from RenderState will trigger updates.
@@ -73,6 +90,7 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
     // tell the panel context we want messages for the current frame for topics we've subscribed to
     // This corresponds to the _currentFrame_ field of render state.
     context.watch("currentFrame");
+    context.watch("didSeek");
 
     // The render handler is run by the broader Foxglove system during playback when your panel
     // needs to render because the fields it is watching have changed. How you handle rendering depends on your framework.
@@ -91,6 +109,9 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
       if (renderState.topics != null) {
         setTopics(renderState.topics as Topic[]);
       }
+
+      // Clear accumulated live state when Foxglove seeks to a different time.
+      let shouldResetStatuses = renderState.didSeek === true;
 
       // Process messages from the subscribed topic
       if (panelState.behaviorTreeXmlTopic && renderState.currentFrame) {
@@ -113,37 +134,39 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
               xmlData = (latestMessage.message as { data?: string }).data;
             }
 
-            if (xmlData && typeof xmlData === "string") {
+            if (xmlData && typeof xmlData === "string" && xmlData !== behaviorTreeXmlRef.current) {
+              // A different tree replaced the loaded one: clear stale live state.
+              if (behaviorTreeXmlRef.current !== undefined) {
+                shouldResetStatuses = true;
+              }
+              behaviorTreeXmlRef.current = xmlData;
               setBehaviorTreeXml(xmlData);
             }
           }
         }
       }
 
+      const logsToApply: BehaviorTreeLog[] = [];
       if (panelState.behaviorTreeLogsTopic && renderState.currentFrame) {
         const messages = renderState.currentFrame.filter(
           (msg) => msg.topic === panelState.behaviorTreeLogsTopic,
         );
 
-        if (messages.length > 0) {
-          const latestMessage = messages[messages.length - 1];
-
-          if (latestMessage?.message) {
-            let logData: BehaviorTreeLog | undefined;
-
-            if (typeof latestMessage.message === "object") {
-              if ("data" in latestMessage.message) {
-                logData = (latestMessage.message as { data?: BehaviorTreeLog }).data;
-              } else {
-                logData = latestMessage.message as BehaviorTreeLog;
-              }
-            }
-
-            if (logData) {
-              setBehaviorTreeLogs(logData);
-            }
+        for (const message of messages) {
+          const logData = extractBehaviorTreeLog(message.message);
+          if (logData) {
+            logsToApply.push(logData);
           }
         }
+      }
+
+      if (shouldResetStatuses || logsToApply.length > 0) {
+        setNodeStatuses((previous) =>
+          applyBehaviorTreeLogs(
+            shouldResetStatuses ? EMPTY_NODE_STATUS_SNAPSHOT : previous,
+            logsToApply,
+          ),
+        );
       }
     };
   }, [context, panelState]);
@@ -226,7 +249,7 @@ function BehaviorTreePanel({ context }: { context: PanelExtensionContext }): Rea
   return (
     // There is a bug with Foxglove's `renderState.colorScheme` prop where it doesn't update properly.
     <div className="h-full w-full dark">
-      <BehaviorTree xml={behaviorTreeXml} logs={behaviorTreeLogs} />
+      <BehaviorTree xml={behaviorTreeXml} nodeStatuses={nodeStatuses} />
     </div>
   );
 }

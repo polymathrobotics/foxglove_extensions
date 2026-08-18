@@ -27,10 +27,10 @@ import { ReactElement, useMemo, useCallback, useEffect, useRef } from "react";
 import "@xyflow/react/dist/style.css";
 
 import { generateDag, DagNode } from "../dag";
-import { TBehaviorTree } from "../types";
+import { NodeStatusName, NodeStatusSnapshot, TBehaviorTree } from "../types";
 import { ElementDetailsPopup } from "./ElementDetailsPopup";
 import { useGraphContext, SelectedElement } from "./GraphContextProvider";
-import { getNodeColor } from "../utils/nodeStyles";
+import { getNodeColor, getNodeStatusColor } from "../utils/nodeStyles";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 
@@ -38,14 +38,20 @@ import { UUID_KEY } from "@/constants";
 
 interface GraphProps {
   behaviorTree: TBehaviorTree | null;
+  nodeStatuses: NodeStatusSnapshot;
 }
 
+type RuntimeDagNode = DagNode & {
+  status?: NodeStatusName;
+};
+
 // Custom node component for behavior tree nodes
-function BehaviorTreeNode({ data }: { data: DagNode }) {
+function BehaviorTreeNode({ data }: { data: RuntimeDagNode }) {
   const { selectedElement, matchedNodeIds } = useGraphContext();
   const isSelected = selectedElement?.id === data.id;
   const isMatched = matchedNodeIds.has(data.id);
-  const nodeColorScheme = getNodeColor(data.model);
+  const modelColorScheme = getNodeColor(data.model);
+  const nodeColorScheme = data.status ? getNodeStatusColor(data.status) : modelColorScheme;
   const nodeClassName = isSelected
     ? nodeColorScheme.nodeStyles.selected
     : nodeColorScheme.nodeStyles.default;
@@ -53,7 +59,8 @@ function BehaviorTreeNode({ data }: { data: DagNode }) {
 
   return (
     <div
-      className={`px-3 py-2 shadow-sm border-2 rounded-lg min-w-24 text-center transition-all duration-200 ${nodeClassName} ${
+      aria-label={`${data.name}: ${data.status ?? "status unknown"}`}
+      className={`relative px-3 ${data.status ? "py-1" : "py-2"} shadow-sm border-2 rounded-lg min-w-24 text-center transition-all duration-200 ${nodeClassName} ${
         isSelected ? "transform scale-105" : "hover:shadow-md"
       } ${isMatched && !isSelected ? "opacity-100" : ""} ${matchedNodeIds.size > 0 && !isMatched ? "opacity-30" : ""}`}
       style={{
@@ -64,13 +71,18 @@ function BehaviorTreeNode({ data }: { data: DagNode }) {
       <Handle type="target" position={Position.Top} className="w-2 h-2" />
 
       <div
-        className={`text-xs flex items-center justify-center mb-1 ${isSelected ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-200"}`}
+        className={`text-xs flex items-center justify-center ${data.status ? "mb-0" : "mb-1"} ${isSelected ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-700 dark:text-gray-200"}`}
       >
-        <Badge className="mr-[8px]" style={{ backgroundColor: nodeColorScheme.badgeColor }}>
+        <Badge className="mr-[8px]" style={{ backgroundColor: modelColorScheme.badgeColor }}>
           {uuid}
         </Badge>
         <span className="truncate">{data.name}</span>
       </div>
+      {data.status && (
+        <div className="text-[10px] leading-none font-bold tracking-wide text-gray-700 dark:text-gray-100">
+          {data.status}
+        </div>
+      )}
       <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
     </div>
   );
@@ -109,7 +121,7 @@ function ViewportCenteringHandler({
   return null; // This component doesn't render anything
 }
 
-export function Graph({ behaviorTree }: GraphProps): ReactElement {
+export function Graph({ behaviorTree, nodeStatuses }: GraphProps): ReactElement {
   const {
     selectedElement,
     selectElement,
@@ -149,14 +161,34 @@ export function Graph({ behaviorTree }: GraphProps): ReactElement {
       return { nodes: [], edges: [] };
     }
 
-    const reactFlowNodes: Node[] = dagGraph.nodes.map((dagNode) => ({
-      id: dagNode.id,
-      type: "behaviorTree",
-      position: { x: dagNode.x ?? 0, y: dagNode.y ?? 0 },
-      data: dagNode as unknown as Record<string, unknown>,
-      draggable: false,
-      style: {},
-    }));
+    const nodeNameCounts = new Map<string, number>();
+    for (const dagNode of dagGraph.nodes) {
+      nodeNameCounts.set(dagNode.name, (nodeNameCounts.get(dagNode.name) ?? 0) + 1);
+    }
+
+    const statusByNodeId = new Map<string, NodeStatusName | undefined>();
+    const reactFlowNodes: Node[] = dagGraph.nodes.map((dagNode) => {
+      const attributeUid = dagNode.attributes?.[UUID_KEY];
+      const statusByAttributeUid =
+        attributeUid !== undefined ? nodeStatuses.byUid[String(attributeUid)] : undefined;
+      const status =
+        statusByAttributeUid ??
+        nodeStatuses.byUid[dagNode.id] ??
+        (nodeNameCounts.get(dagNode.name) === 1
+          ? nodeStatuses.byName[dagNode.name]
+          : undefined);
+      const runtimeNode: RuntimeDagNode = { ...dagNode, status };
+      statusByNodeId.set(dagNode.id, status);
+
+      return {
+        id: dagNode.id,
+        type: "behaviorTree",
+        position: { x: dagNode.x ?? 0, y: dagNode.y ?? 0 },
+        data: runtimeNode as unknown as Record<string, unknown>,
+        draggable: false,
+        style: {},
+      };
+    });
 
     const reactFlowEdges: Edge[] = dagGraph.edges.map((dagEdge, index) => ({
       id: `${dagEdge.source}-${dagEdge.target}-${index}`,
@@ -164,11 +196,11 @@ export function Graph({ behaviorTree }: GraphProps): ReactElement {
       target: dagEdge.target,
       type: "smoothstep",
       style: { stroke: "#6b7280", strokeWidth: 2 },
-      animated: false,
+      animated: statusByNodeId.get(dagEdge.target) === "RUNNING",
     }));
 
     return { nodes: reactFlowNodes, edges: reactFlowEdges };
-  }, [dagGraph]);
+  }, [dagGraph, nodeStatuses]);
 
   // Update matched nodes when search query changes
   useEffect(() => {
@@ -253,7 +285,7 @@ export function Graph({ behaviorTree }: GraphProps): ReactElement {
 
   const onNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      const dagNode = node.data as unknown as DagNode;
+      const dagNode = node.data as unknown as RuntimeDagNode;
 
       // Format the node data for the popup
       const element: SelectedElement = {

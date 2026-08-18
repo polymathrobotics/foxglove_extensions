@@ -27,6 +27,15 @@ export enum NodeStatus {
   SKIPPED = 4,
 }
 
+export const NODE_STATUS_NAMES = [
+  "IDLE",
+  "RUNNING",
+  "SUCCESS",
+  "FAILURE",
+  "SKIPPED",
+] as const;
+export type NodeStatusName = (typeof NODE_STATUS_NAMES)[number];
+
 export enum PortDirection {
   INPUT = "input",
   OUTPUT = "output",
@@ -81,6 +90,7 @@ export type Timestamp = {
 export type BehaviorTreeLogEvent = {
   timestamp: Timestamp;
   node_name: string;
+  uid: number;
   previous_status: keyof typeof NodeStatus | string;
   current_status: keyof typeof NodeStatus | string;
 };
@@ -89,4 +99,9 @@ export type BehaviorTreeLogEvent = {
 export type BehaviorTreeLog = {
   timestamp: Timestamp;
   event_log: BehaviorTreeLogEvent[];
+};
+
+export type NodeStatusSnapshot = {
+  byUid: Readonly<Record<string, NodeStatusName>>;
+  byName: Readonly<Record<string, NodeStatusName>>;
 };
