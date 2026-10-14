@@ -16,7 +16,8 @@
     "lint:fix": "eslint --fix .",
     "local-install": "foxglove-extension install",
     "package": "foxglove-extension package",
-    "pretest": "foxglove-extension pretest"
+    "test": "node --experimental-strip-types --no-warnings --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@foxglove/eslint-plugin": "2.1.0",
