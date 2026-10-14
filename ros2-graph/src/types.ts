@@ -24,12 +24,21 @@ type QosProfile = {
   liveliness_lease_duration: Duration;
 };
 
-// Topic type based on Topic.msg
+// Topic type, normalized from either rosgraph_monitor_msgs/msg/Topic or rosgraph_msgs/msg/Topic
 type Topic = {
   name: string;
   qos: QosProfile;
   type: string;
 };
+
+// rosgraph_msgs/msg/InterfaceType
+type InterfaceType = {
+  name: string;
+  hash: { version: number; value: Uint8Array | number[] };
+};
+
+// Topic as received: `type` is a string in rosgraph_monitor_msgs, an InterfaceType in rosgraph_msgs
+export type RawTopic = Omit<Topic, "type"> & { type: string | InterfaceType };
 
 // Parameter types (referenced in NodeInfo.msg)
 type ParameterDescriptor = {
@@ -65,10 +74,22 @@ export type NodeInfo = {
   parameter_values: ParameterValue[];
 };
 
-// Graph type based on Graph.msg
+// Graph, normalized from either rosgraph_monitor_msgs/msg/Graph or rosgraph_msgs/msg/Graph
 export type Graph = {
-  timestamp: Time;
+  timestamp?: Time;
   nodes: NodeInfo[];
+};
+
+// rosgraph_msgs/msg/Node adds service and action endpoints, unused by the panel
+export type RawNodeInfo = Omit<NodeInfo, "publishers" | "subscriptions"> & {
+  publishers: RawTopic[];
+  subscriptions: RawTopic[];
+};
+
+// Graph as received on the wire; rosgraph_msgs/msg/Graph has no timestamp
+export type RawGraph = {
+  timestamp?: Time;
+  nodes: RawNodeInfo[];
 };
 
 // Main ROS2GraphMessage type - this represents the Graph message

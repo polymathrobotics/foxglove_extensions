@@ -13,4 +13,8 @@
 // limitations under the License.
 export const DEFAULT_TOPIC_NAME = "/rosgraph";
 
-export const ROS2_GRAPH_SCHEMA_NAME = "rosgraph_monitor_msgs/msg/Graph";
+// rosgraph_msgs is published by graph-monitor >= 0.3.0, rosgraph_monitor_msgs by 0.2.x
+export const ROS2_GRAPH_SCHEMA_NAMES = [
+  "rosgraph_msgs/msg/Graph",
+  "rosgraph_monitor_msgs/msg/Graph",
+];

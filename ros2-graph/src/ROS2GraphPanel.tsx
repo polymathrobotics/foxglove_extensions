@@ -19,8 +19,9 @@ import "reactflow/dist/style.css";
 
 // Custom
 import { GraphViewComponent } from "./GraphView";
-import { DEFAULT_TOPIC_NAME, ROS2_GRAPH_SCHEMA_NAME } from "./constants";
-import type { ROS2GraphMessage } from "./types";
+import { DEFAULT_TOPIC_NAME, ROS2_GRAPH_SCHEMA_NAMES } from "./constants";
+import { normalizeGraph } from "./normalize";
+import type { RawGraph, ROS2GraphMessage } from "./types";
 
 function ROS2GraphPanel({ context }: { context: PanelExtensionContext }) {
   const [topicName, setTopicName] = useState<string | undefined>(DEFAULT_TOPIC_NAME);
@@ -43,7 +44,7 @@ function ROS2GraphPanel({ context }: { context: PanelExtensionContext }) {
       const lastMessage = renderState.currentFrame?.[renderState.currentFrame.length - 1];
       console.log("lastMessage", lastMessage);
       if (lastMessage?.message != null) {
-        setGraphData(lastMessage.message as ROS2GraphMessage);
+        setGraphData(normalizeGraph(lastMessage.message as RawGraph));
       }
     };
   }, [context]);
@@ -58,7 +59,9 @@ function ROS2GraphPanel({ context }: { context: PanelExtensionContext }) {
   // Create a list of valid topic names that can be subscribed to
   const validTopicNames = useMemo(() => {
     // Create a list of valid topic names that can be subscribed to
-    const output = topics.filter((t) => t.schemaName === ROS2_GRAPH_SCHEMA_NAME).map((t) => t.name);
+    const output = topics
+      .filter((t) => ROS2_GRAPH_SCHEMA_NAMES.includes(t.schemaName))
+      .map((t) => t.name);
     // If a topic name is filled in that doesn't appear in the list, force add it to the top
     // so the setting is not lost
     if (topicName && !output.includes(topicName)) {

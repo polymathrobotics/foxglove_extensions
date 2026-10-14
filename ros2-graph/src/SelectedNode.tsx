@@ -41,14 +41,20 @@ function formatParameterValue(paramValue: unknown): string {
     return "Not Set";
   }
 
-  const value = paramValue as { type?: number; [key: string]: unknown };
+  const value = paramValue as {
+    type?: number;
+    integer_value?: number | bigint;
+    double_value?: number;
+    string_value?: string;
+    [key: string]: unknown;
+  };
 
   if (value.type === 0) {
     return "Not Set";
   }
 
   // Extract the correct value field based on type
-  switch (value.type) {
+  switch (value.type ?? 0) {
     case 1: // PARAMETER_BOOL
       return value.bool_value === true ? "true" : value.bool_value === false ? "false" : "N/A";
     case 2: // PARAMETER_INTEGER
