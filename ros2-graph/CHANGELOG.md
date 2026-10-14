@@ -1,6 +1,6 @@
 # ros-graph version history
 
-## Unreleased
+## 0.1.0
 
 - Support `rosgraph_msgs/msg/Graph` from graph-monitor 0.3.0, alongside `rosgraph_monitor_msgs/msg/Graph` from 0.2.x
 
